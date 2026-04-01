@@ -1,0 +1,39 @@
+{
+  "_tool":       "ReconScout v2.1",
+  "_disclaimer": "Authorized security testing and educational purposes only.",
+
+  "scan_intensity": {
+    "stealth": {
+      "threads": 5,
+      "timeout": 3.0,
+      "delay":   0.5,
+      "_note":   "Minimal footprint — long ETA, evades basic rate-limiting IDS"
+    },
+    "normal": {
+      "threads": 50,
+      "timeout": 2.0,
+      "delay":   0.0,
+      "_note":   "Balanced — suitable for most authorized engagements"
+    },
+    "aggressive": {
+      "threads": 200,
+      "timeout": 0.5,
+      "delay":   0.0,
+      "_note":   "Maximum speed — generates significant network noise, internal use"
+    }
+  },
+
+  "user_agent": "Mozilla/5.0 (compatible; ReconScout/2.1; +github.com/yourorg/reconscout)",
+
+  "dns_servers": [
+    "8.8.8.8",
+    "1.1.1.1",
+    "9.9.9.9"
+  ],
+
+  "wordlist_default": "",
+
+  "http_timeout":  8,
+  "retry_count":   2,
+  "retry_delay":   0.5
+}

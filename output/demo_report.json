@@ -1,0 +1,265 @@
+{
+  "meta": {
+    "tool": "ReconScout v2.1",
+    "author": "Agent P",
+    "generated": "2026-03-31T16:58:52.512029",
+    "disclaimer": "For authorized security testing only",
+    "github": "github.com/yourorg/reconscout"
+  },
+  "result": {
+    "target": "demo.example.com",
+    "target_type": "domain",
+    "ip_address": "93.184.216.34",
+    "hostname": "demo.example.com",
+    "scan_mode": "full",
+    "scan_type": "active+passive",
+    "started_at": "2025-01-15 14:32:01",
+    "finished_at": "2025-01-15 14:35:47",
+    "duration_sec": 226.3,
+    "ports": [
+      {
+        "port": 22,
+        "protocol": "tcp",
+        "state": "open",
+        "service": "SSH",
+        "banner": "OpenSSH_9.2p1",
+        "version": "SSH-2.0-OpenSSH_9.2p1 Debian",
+        "cpe": "cpe:/a:openbsd:openssh:9.2p1"
+      },
+      {
+        "port": 80,
+        "protocol": "tcp",
+        "state": "open",
+        "service": "HTTP",
+        "banner": "",
+        "version": "",
+        "cpe": ""
+      },
+      {
+        "port": 443,
+        "protocol": "tcp",
+        "state": "open",
+        "service": "HTTPS",
+        "banner": "",
+        "version": "",
+        "cpe": ""
+      },
+      {
+        "port": 8080,
+        "protocol": "tcp",
+        "state": "open",
+        "service": "HTTP-Proxy",
+        "banner": "nginx/1.24.0",
+        "version": "nginx/1.24.0",
+        "cpe": ""
+      },
+      {
+        "port": 3306,
+        "protocol": "tcp",
+        "state": "filtered",
+        "service": "MySQL",
+        "banner": "",
+        "version": "",
+        "cpe": ""
+      },
+      {
+        "port": 110,
+        "protocol": "tcp",
+        "state": "closed",
+        "service": "POP3",
+        "banner": "",
+        "version": "",
+        "cpe": ""
+      }
+    ],
+    "dns": {
+      "a": [
+        "93.184.216.34"
+      ],
+      "aaaa": [],
+      "mx": [
+        "0 mail.example.com"
+      ],
+      "ns": [
+        "a.iana-servers.net"
+      ],
+      "txt": [
+        "v=spf1 -all",
+        "v=DMARC1; p=reject"
+      ],
+      "cname": [],
+      "soa": [
+        "ns1.example.com. 2024010101"
+      ],
+      "srv": [],
+      "reverse": [
+        "demo.example.com"
+      ],
+      "zone_transfer": []
+    },
+    "web": {
+      "url": "https://demo.example.com",
+      "status_code": 200,
+      "server": "nginx/1.24.0",
+      "title": "Example Domain",
+      "technologies": [
+        "Nginx",
+        "PHP",
+        "WordPress"
+      ],
+      "headers": {
+        "server": "nginx/1.24.0",
+        "strict-transport-security": "max-age=31536000",
+        "x-frame-options": "SAMEORIGIN"
+      },
+      "cookies": [
+        "session=abc; HttpOnly; Secure"
+      ],
+      "robots_txt": "User-agent: *\nDisallow: /admin/",
+      "sitemap": "",
+      "https_redirect": true,
+      "hsts": true,
+      "cdn_waf": [
+        "Cloudflare"
+      ],
+      "directories": [
+        "https://demo.example.com/admin [403]",
+        "https://demo.example.com/.env [403]"
+      ],
+      "misconfigs": [
+        "Missing Content-Security-Policy",
+        "Server version disclosure: nginx/1.24.0"
+      ],
+      "forms": [
+        "POST \u2192 /wp-login.php"
+      ],
+      "emails": [
+        "admin@example.com"
+      ],
+      "comments": [],
+      "js_files": [],
+      "links": [],
+      "screenshot_b64": "",
+      "content_length": 48291,
+      "response_time": 0.34
+    },
+    "ssl": {
+      "enabled": true,
+      "version": "TLSv1.3",
+      "cipher": "TLS_AES_256_GCM_SHA384",
+      "issuer": "Let's Encrypt",
+      "subject": "demo.example.com",
+      "valid_from": "Jan 1 00:00:00 2025 UTC",
+      "valid_to": "Apr 1 00:00:00 2025 UTC",
+      "expired": false,
+      "self_signed": false,
+      "san": [
+        "demo.example.com",
+        "www.demo.example.com"
+      ],
+      "vulnerabilities": [],
+      "grade": "A+"
+    },
+    "smtp": {
+      "open": true,
+      "banner": "220 mail.example.com ESMTP Postfix",
+      "starttls": true,
+      "auth_methods": [
+        "PLAIN",
+        "LOGIN"
+      ],
+      "open_relay": false,
+      "vrfy_enabled": false,
+      "expn_enabled": false,
+      "users_found": []
+    },
+    "network": {
+      "hops": [
+        {
+          "hop": 1,
+          "ip": "192.168.1.1",
+          "hostname": "gw",
+          "rtt_ms": 0.8
+        },
+        {
+          "hop": 2,
+          "ip": "72.14.192.1",
+          "hostname": "",
+          "rtt_ms": 5.4
+        },
+        {
+          "hop": 3,
+          "ip": "93.184.216.34",
+          "hostname": "demo.example.com",
+          "rtt_ms": 14.7
+        }
+      ],
+      "firewall_detected": false,
+      "firewall_type": "",
+      "load_balancer": true,
+      "isp": "Edgecast"
+    },
+    "intel": {
+      "whois_raw": "Domain Name: EXAMPLE.COM\nCreation Date: 1995-08-14",
+      "whois_emails": [
+        "admin@example.com",
+        "tech@example.com"
+      ],
+      "whois_org": "IANA",
+      "whois_country": "US",
+      "whois_created": "1995-08-14",
+      "whois_expires": "2024-08-13",
+      "asn": "AS15133",
+      "ip_range": "93.184.216.0/24",
+      "geoip": {
+        "country": "United States",
+        "region": "Massachusetts",
+        "city": "Norwood",
+        "isp": "Verizon Business",
+        "org": "Edgecast Inc.",
+        "asn": "AS15133",
+        "timezone": "America/New_York"
+      },
+      "reverse_ip": [
+        "demo.example.com",
+        "example.com"
+      ],
+      "os_guess": "Linux / Unix (TTL=54)",
+      "misconfigs": [],
+      "shodan_data": {},
+      "cve_list": [],
+      "leaked_creds": []
+    },
+    "subdomains": [
+      "admin.example.com",
+      "api.example.com",
+      "auth.example.com",
+      "blog.example.com",
+      "cdn.example.com",
+      "dashboard.example.com",
+      "dev.example.com",
+      "docs.example.com",
+      "mail.example.com",
+      "staging.example.com",
+      "vpn.example.com",
+      "www.example.com"
+    ],
+    "stats": {
+      "open_ports": 4,
+      "closed_ports": 1,
+      "filtered_ports": 1,
+      "total_scanned": 6,
+      "subdomains": 12,
+      "top_service": "HTTPS",
+      "findings": 6,
+      "service_counts": {
+        "SSH": 1,
+        "HTTP": 1,
+        "HTTPS": 1,
+        "HTTP-Proxy": 1
+      },
+      "scan_duration": 226.3
+    },
+    "warnings": []
+  }
+}
