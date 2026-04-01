@@ -91,8 +91,8 @@ reconscout/
 
 ```bash
 # Clone
-git clone https://github.com/yourorg/reconscout.git
-cd reconscout
+git clone https://github.com/ParthTrilokchandani/ReconScout.git
+cd ReconScout
 
 # Python 3.8+ required — no external dependencies for core features
 python3 --version
