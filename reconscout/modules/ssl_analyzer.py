@@ -205,10 +205,11 @@ class SSLAnalyzer:
         if result.self_signed:
             vulns.append("Self-signed certificate (untrusted)")
 
-        # Negotiated protocol weak?
+        # Negotiated protocol weak? — use exact match to avoid "TLSv1" matching "TLSv1.3"
         version = result.version or ""
         for weak_proto in WEAK_PROTOCOLS:
-            if weak_proto.lower() in version.lower():
+            # Exact match only — "TLSv1" must NOT match "TLSv1.2" or "TLSv1.3"
+            if version.strip() == weak_proto:
                 vulns.append(f"Weak protocol negotiated: {weak_proto}")
 
         # Negotiated cipher weak?

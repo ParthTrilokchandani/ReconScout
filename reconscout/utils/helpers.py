@@ -218,7 +218,7 @@ def http_request(
 
             t0 = time.time()
             with opener.open(req, timeout=timeout) as resp:
-                body    = resp.read(131072).decode("utf-8", errors="replace")
+                body    = resp.read(4194304).decode("utf-8", errors="replace")  # 4MB limit
                 elapsed = time.time() - t0
                 return resp.status, dict(resp.headers), body, elapsed
 

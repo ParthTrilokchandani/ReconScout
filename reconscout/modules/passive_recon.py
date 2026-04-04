@@ -189,74 +189,192 @@ class PassiveRecon:
 
     # ── ASN Lookup ──────────────────────────────────────────────────────────
 
-    def asn_lookup(self, ip: str) -> Tuple[str, str, str]:
+    def asn_lookup(self, ip: str):
         """
-        Returns (asn, ip_range, description) via Team Cymru whois.
+        Returns a populated ASNResult via multiple sources:
+          1. ip-api.com  (fast, reliable, no auth)
+          2. Team Cymru whois (detailed, may be slow)
+          3. RIPEstat   (prefixes + BGP peers)
+          4. ARIN RDAP  (RIR + abuse contact)
         """
-        asn, ip_range, desc = "", "", ""
+        from reconscout.models import ASNResult
+        result = ASNResult()
+
+        # ── 1. ip-api.com — fastest, most reliable for basic ASN ────────
+        try:
+            resp = http_request(
+                f"http://ip-api.com/json/{ip}?fields=as,org,isp,country,countryCode",
+                user_agent=self._ua, timeout=6
+            )
+            if resp and resp[0] == 200:
+                data = json.loads(resp[2])
+                if data.get("status") != "fail":
+                    raw_as = data.get("as", "")          # e.g. "AS16509 Amazon.com, Inc."
+                    if raw_as:
+                        parts = raw_as.split(" ", 1)
+                        result.asn = parts[0].strip()    # "AS16509"
+                        if not result.org:
+                            result.org = parts[1].strip() if len(parts) > 1 else ""
+                    result.org     = result.org or data.get("org", "")
+                    result.isp     = data.get("isp", "")
+                    result.country = data.get("country", "")
+                    self.logger.debug(f"ip-api ASN: {result.asn} | {result.org}")
+        except Exception as e:
+            self.logger.debug(f"ip-api ASN error: {e}")
+
+        # ── 2. Team Cymru whois — more detail, ip_range ──────────────────
         try:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 s.settimeout(8)
                 s.connect(("whois.cymru.com", 43))
                 s.sendall(f"begin\nverbose\n{ip}\nend\n".encode())
+                # Read with per-chunk timeout to avoid hanging
                 buf = b""
-                while True:
-                    chunk = s.recv(4096)
-                    if not chunk:
-                        break
-                    buf += chunk
+                s.settimeout(3)    # short timeout for subsequent chunks
+                try:
+                    while True:
+                        chunk = s.recv(4096)
+                        if not chunk:
+                            break
+                        buf += chunk
+                except socket.timeout:
+                    pass   # normal — Cymru doesn't always close connection
             text  = buf.decode("utf-8", errors="replace")
             lines = [l.strip() for l in text.splitlines()
                      if l.strip() and not l.startswith("#")]
             if lines:
                 parts = [p.strip() for p in lines[0].split("|")]
-                if len(parts) >= 4:
-                    asn      = f"AS{parts[0].strip()}" if parts[0].strip() else ""
-                    ip_range = parts[2].strip()
-                    desc     = parts[3].strip()[:80]
-            self.logger.debug(f"ASN: {asn} | Range: {ip_range}")
+                # Format: ASN | IP | BGP Prefix | CC | Registry | Allocated | AS Name
+                if len(parts) >= 1 and parts[0] and not result.asn:
+                    result.asn = f"AS{parts[0]}"
+                if len(parts) >= 3:
+                    result.ip_range = parts[2].strip()
+                if len(parts) >= 4 and not result.country:
+                    result.country  = parts[3].strip()
+                if len(parts) >= 7 and not result.org:
+                    result.org      = parts[6].strip()[:80]
+            self.logger.debug(f"Cymru: {result.asn} | {result.ip_range}")
         except Exception as e:
-            self.logger.debug(f"ASN lookup error: {e}")
-        return asn, ip_range, desc
+            self.logger.debug(f"Cymru ASN error: {e}")
+
+        # ── 3. RIPEstat for announced prefixes & BGP peers ───────────────
+        if result.asn:
+            try:
+                resp = http_request(
+                    f"https://stat.ripe.net/data/announced-prefixes/data.json?resource={result.asn}",
+                    user_agent=self._ua, timeout=8, retry_count=1
+                )
+                if resp and resp[0] == 200:
+                    data = json.loads(resp[2])
+                    prefixes = data.get("data", {}).get("prefixes", [])
+                    result.prefixes = [p.get("prefix", "") for p in prefixes[:20]]
+                    self.logger.debug(f"  RIPEstat prefixes: {len(result.prefixes)}")
+            except Exception as e:
+                self.logger.debug(f"  RIPEstat prefixes error: {e}")
+
+            try:
+                resp2 = http_request(
+                    f"https://stat.ripe.net/data/asn-neighbours/data.json?resource={result.asn}",
+                    user_agent=self._ua, timeout=8, retry_count=1
+                )
+                if resp2 and resp2[0] == 200:
+                    data2 = json.loads(resp2[2])
+                    neighbours = data2.get("data", {}).get("neighbours", [])
+                    result.peers = [
+                        f"AS{n.get('asn','')} ({n.get('type','')})"
+                        for n in neighbours[:10]
+                    ]
+                    self.logger.debug(f"  RIPEstat peers: {len(result.peers)}")
+            except Exception as e:
+                self.logger.debug(f"  RIPEstat peers error: {e}")
+
+        # ── 4. ARIN RDAP — RIR name + abuse email ────────────────────────
+        try:
+            resp3 = http_request(
+                f"https://rdap.arin.net/registry/ip/{ip}",
+                user_agent=self._ua, timeout=6, retry_count=1
+            )
+            if resp3 and resp3[0] == 200:
+                data3 = json.loads(resp3[2])
+                port43 = data3.get("port43", "")
+                if port43:
+                    result.rir = port43.split(".")[0].upper()
+                for entity in data3.get("entities", []):
+                    for role in entity.get("roles", []):
+                        if role == "abuse":
+                            vcard = entity.get("vcardArray", [])
+                            if isinstance(vcard, list) and len(vcard) > 1:
+                                for prop in vcard[1]:
+                                    if isinstance(prop, list) and len(prop) >= 4:
+                                        if prop[0] == "email":
+                                            result.abuse_email = str(prop[3])
+        except Exception as e:
+            self.logger.debug(f"  ARIN RDAP error: {e}")
+
+        self.logger.info(
+            f"  ASN result: {result.asn or '?'} | {result.org or '?'} | "
+            f"{result.ip_range or '?'} | RIR:{result.rir or '?'}"
+        )
+        return result
 
     # ── GeoIP ───────────────────────────────────────────────────────────────
 
-    def geoip_lookup(self, ip: str) -> Dict[str, str]:
-        """GeoIP via ip-api.com free endpoint."""
+    def geoip_lookup(self, ip: str):
+        """
+        Returns a populated GeoIPResult via ip-api.com free endpoint.
+        """
+        from reconscout.models import GeoIPResult
+        result = GeoIPResult(ip=ip)
         try:
             resp = http_request(
-                f"http://ip-api.com/json/{ip}?fields=country,regionName,city,isp,org,as,timezone",
+                f"http://ip-api.com/json/{ip}?fields=country,regionName,city,lat,lon,isp,org,as,timezone",
                 user_agent=self._ua, timeout=8
             )
             if resp:
                 data = json.loads(resp[2])
                 if data.get("status") != "fail":
-                    return {
-                        "country":  data.get("country", ""),
-                        "region":   data.get("regionName", ""),
-                        "city":     data.get("city", ""),
-                        "isp":      data.get("isp", ""),
-                        "org":      data.get("org", ""),
-                        "asn":      data.get("as", ""),
-                        "timezone": data.get("timezone", ""),
-                    }
+                    result.country  = data.get("country", "")
+                    result.region   = data.get("regionName", "")
+                    result.city     = data.get("city", "")
+                    result.lat      = float(data.get("lat", 0.0))
+                    result.lon      = float(data.get("lon", 0.0))
+                    result.isp      = data.get("isp", "")
+                    result.org      = data.get("org", "")
+                    result.asn      = data.get("as", "")
+                    result.timezone = data.get("timezone", "")
         except Exception as e:
             self.logger.debug(f"GeoIP error: {e}")
-        return {}
+        return result
 
     # ── Reverse IP Lookup ───────────────────────────────────────────────────
 
     def reverse_ip_lookup(self, ip: str) -> List[str]:
         """Find co-hosted domains via HackerTarget free API."""
+        # Strings that indicate an error / no-data response from HackerTarget
+        SKIP_PHRASES = [
+            "no dns a records found",
+            "error",
+            "api count exceeded",
+            "no results",
+            "invalid",
+        ]
         try:
             resp = http_request(
                 f"https://api.hackertarget.com/reverseiplookup/?q={ip}",
                 user_agent=self._ua, timeout=10
             )
             if resp and resp[0] == 200:
-                body = resp[2]
-                if "error" not in body.lower() and "API count exceeded" not in body:
-                    return [d.strip() for d in body.splitlines() if d.strip()][:30]
+                body = resp[2].strip()
+                # Filter out HackerTarget error/info lines
+                lines = [
+                    d.strip() for d in body.splitlines()
+                    if d.strip()
+                    and not any(phrase in d.lower() for phrase in SKIP_PHRASES)
+                    and "." in d   # must look like a domain/IP
+                ]
+                if lines:
+                    self.logger.debug(f"Reverse-IP: {len(lines)} co-hosted domains")
+                    return lines[:30]
         except Exception as e:
             self.logger.debug(f"Reverse-IP error: {e}")
         return []
