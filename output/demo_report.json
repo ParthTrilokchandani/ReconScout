@@ -2,19 +2,18 @@
   "meta": {
     "tool": "ReconScout v2.1",
     "author": "Agent P",
-    "generated": "2026-03-31T16:58:52.512029",
-    "disclaimer": "For authorized security testing only",
-    "github": "github.com/yourorg/reconscout"
+    "generated": "2026-04-04T05:22:21.138423",
+    "disclaimer": "For authorized security testing only"
   },
   "result": {
-    "target": "demo.example.com",
+    "target": "example.com",
     "target_type": "domain",
     "ip_address": "93.184.216.34",
-    "hostname": "demo.example.com",
+    "hostname": "example.com",
     "scan_mode": "full",
     "scan_type": "active+passive",
-    "started_at": "2025-01-15 14:32:01",
-    "finished_at": "2025-01-15 14:35:47",
+    "started_at": "2025-04-04 14:22:01",
+    "finished_at": "2025-04-04 14:25:47",
     "duration_sec": 226.3,
     "ports": [
       {
@@ -23,14 +22,50 @@
         "state": "open",
         "service": "SSH",
         "banner": "OpenSSH_9.2p1",
-        "version": "SSH-2.0-OpenSSH_9.2p1 Debian",
+        "version": "SSH-2.0-OpenSSH_9.2p1 Ubuntu-3ubuntu0.6",
         "cpe": "cpe:/a:openbsd:openssh:9.2p1"
+      },
+      {
+        "port": 25,
+        "protocol": "tcp",
+        "state": "filtered",
+        "service": "SMTP",
+        "banner": "",
+        "version": "",
+        "cpe": ""
+      },
+      {
+        "port": 53,
+        "protocol": "tcp",
+        "state": "open",
+        "service": "DNS",
+        "banner": "BIND 9.18",
+        "version": "BIND 9.18.18-Ubuntu",
+        "cpe": ""
       },
       {
         "port": 80,
         "protocol": "tcp",
         "state": "open",
         "service": "HTTP",
+        "banner": "",
+        "version": "",
+        "cpe": ""
+      },
+      {
+        "port": 110,
+        "protocol": "tcp",
+        "state": "closed",
+        "service": "POP3",
+        "banner": "",
+        "version": "",
+        "cpe": ""
+      },
+      {
+        "port": 143,
+        "protocol": "tcp",
+        "state": "closed",
+        "service": "IMAP",
         "banner": "",
         "version": "",
         "cpe": ""
@@ -45,12 +80,12 @@
         "cpe": ""
       },
       {
-        "port": 8080,
+        "port": 445,
         "protocol": "tcp",
-        "state": "open",
-        "service": "HTTP-Proxy",
-        "banner": "nginx/1.24.0",
-        "version": "nginx/1.24.0",
+        "state": "filtered",
+        "service": "SMB",
+        "banner": "",
+        "version": "",
         "cpe": ""
       },
       {
@@ -63,110 +98,59 @@
         "cpe": ""
       },
       {
-        "port": 110,
+        "port": 5432,
         "protocol": "tcp",
-        "state": "closed",
-        "service": "POP3",
+        "state": "filtered",
+        "service": "PostgreSQL",
+        "banner": "",
+        "version": "",
+        "cpe": ""
+      },
+      {
+        "port": 6379,
+        "protocol": "tcp",
+        "state": "open",
+        "service": "Redis",
+        "banner": "7.0.11",
+        "version": "redis_version:7.0.11",
+        "cpe": ""
+      },
+      {
+        "port": 8080,
+        "protocol": "tcp",
+        "state": "open",
+        "service": "HTTP-Proxy",
+        "banner": "nginx/1.24.0",
+        "version": "nginx/1.24.0",
+        "cpe": ""
+      },
+      {
+        "port": 8443,
+        "protocol": "tcp",
+        "state": "open",
+        "service": "HTTPS-Alt",
+        "banner": "",
+        "version": "",
+        "cpe": ""
+      },
+      {
+        "port": 9200,
+        "protocol": "tcp",
+        "state": "filtered",
+        "service": "Elasticsearch",
         "banner": "",
         "version": "",
         "cpe": ""
       }
     ],
-    "dns": {
-      "a": [
-        "93.184.216.34"
-      ],
-      "aaaa": [],
-      "mx": [
-        "0 mail.example.com"
-      ],
-      "ns": [
-        "a.iana-servers.net"
-      ],
-      "txt": [
-        "v=spf1 -all",
-        "v=DMARC1; p=reject"
-      ],
-      "cname": [],
-      "soa": [
-        "ns1.example.com. 2024010101"
-      ],
-      "srv": [],
-      "reverse": [
-        "demo.example.com"
-      ],
-      "zone_transfer": []
-    },
-    "web": {
-      "url": "https://demo.example.com",
-      "status_code": 200,
-      "server": "nginx/1.24.0",
-      "title": "Example Domain",
-      "technologies": [
-        "Nginx",
-        "PHP",
-        "WordPress"
-      ],
-      "headers": {
-        "server": "nginx/1.24.0",
-        "strict-transport-security": "max-age=31536000",
-        "x-frame-options": "SAMEORIGIN"
-      },
-      "cookies": [
-        "session=abc; HttpOnly; Secure"
-      ],
-      "robots_txt": "User-agent: *\nDisallow: /admin/",
-      "sitemap": "",
-      "https_redirect": true,
-      "hsts": true,
-      "cdn_waf": [
-        "Cloudflare"
-      ],
-      "directories": [
-        "https://demo.example.com/admin [403]",
-        "https://demo.example.com/.env [403]"
-      ],
-      "misconfigs": [
-        "Missing Content-Security-Policy",
-        "Server version disclosure: nginx/1.24.0"
-      ],
-      "forms": [
-        "POST \u2192 /wp-login.php"
-      ],
-      "emails": [
-        "admin@example.com"
-      ],
-      "comments": [],
-      "js_files": [],
-      "links": [],
-      "screenshot_b64": "",
-      "content_length": 48291,
-      "response_time": 0.34
-    },
-    "ssl": {
-      "enabled": true,
-      "version": "TLSv1.3",
-      "cipher": "TLS_AES_256_GCM_SHA384",
-      "issuer": "Let's Encrypt",
-      "subject": "demo.example.com",
-      "valid_from": "Jan 1 00:00:00 2025 UTC",
-      "valid_to": "Apr 1 00:00:00 2025 UTC",
-      "expired": false,
-      "self_signed": false,
-      "san": [
-        "demo.example.com",
-        "www.demo.example.com"
-      ],
-      "vulnerabilities": [],
-      "grade": "A+"
-    },
     "smtp": {
       "open": true,
-      "banner": "220 mail.example.com ESMTP Postfix",
+      "banner": "220 mail.example.com ESMTP Postfix (Ubuntu)",
       "starttls": true,
       "auth_methods": [
         "PLAIN",
-        "LOGIN"
+        "LOGIN",
+        "XOAUTH2"
       ],
       "open_relay": false,
       "vrfy_enabled": false,
@@ -178,88 +162,461 @@
         {
           "hop": 1,
           "ip": "192.168.1.1",
-          "hostname": "gw",
+          "hostname": "gateway.local",
           "rtt_ms": 0.8
         },
         {
           "hop": 2,
-          "ip": "72.14.192.1",
-          "hostname": "",
-          "rtt_ms": 5.4
+          "ip": "10.0.0.1",
+          "hostname": "isp-router.net",
+          "rtt_ms": 2.4
         },
         {
           "hop": 3,
+          "ip": "72.14.192.1",
+          "hostname": "",
+          "rtt_ms": 5.1
+        },
+        {
+          "hop": 4,
+          "ip": "",
+          "hostname": "",
+          "rtt_ms": 0.0
+        },
+        {
+          "hop": 5,
+          "ip": "209.85.240.1",
+          "hostname": "",
+          "rtt_ms": 9.7
+        },
+        {
+          "hop": 6,
+          "ip": "72.14.234.100",
+          "hostname": "google-peer.net",
+          "rtt_ms": 11.3
+        },
+        {
+          "hop": 7,
           "ip": "93.184.216.34",
-          "hostname": "demo.example.com",
+          "hostname": "example.com",
           "rtt_ms": 14.7
         }
       ],
-      "firewall_detected": false,
-      "firewall_type": "",
+      "firewall_detected": true,
+      "firewall_type": "Stateful Firewall / ICMP-filtered hops (hop 4 unreachable)",
       "load_balancer": true,
-      "isp": "Edgecast"
+      "isp": "Edgecast Inc."
+    },
+    "dns": {
+      "a": [
+        "93.184.216.34"
+      ],
+      "aaaa": [
+        "2606:2800:21f:cb07:6820:80da:af6b:8b2c"
+      ],
+      "mx": [
+        "0 mail.example.com.",
+        "10 mail2.example.com."
+      ],
+      "ns": [
+        "a.iana-servers.net.",
+        "b.iana-servers.net."
+      ],
+      "txt": [
+        "v=spf1 -all",
+        "google-site-verification=abc123xyz",
+        "v=DMARC1; p=reject; rua=mailto:dmarc@example.com"
+      ],
+      "cname": [],
+      "soa": [
+        "a.iana-servers.net. noc.dns.icann.org. 2024090143 7200 3600 1209600 3600"
+      ],
+      "srv": [],
+      "reverse": [
+        "example.com"
+      ],
+      "zone_transfer": []
+    },
+    "asn": {
+      "asn": "AS15133",
+      "org": "Edgecast Inc.",
+      "isp": "MCI Communications Services, Inc. d/b/a Verizon Business",
+      "ip_range": "93.184.216.0/24",
+      "country": "US",
+      "rir": "ARIN",
+      "abuse_email": "abuse@verizonbusiness.com",
+      "peers": [
+        "AS701 (upstream)",
+        "AS1239 (upstream)",
+        "AS6461 (peer)",
+        "AS3356 (peer)"
+      ],
+      "prefixes": [
+        "93.184.216.0/24",
+        "93.184.220.0/22",
+        "93.184.8.0/21"
+      ]
+    },
+    "geoip": {
+      "ip": "93.184.216.34",
+      "country": "United States",
+      "region": "Massachusetts",
+      "city": "Norwood",
+      "lat": 42.1654,
+      "lon": -71.1995,
+      "timezone": "America/New_York",
+      "isp": "MCI Communications Services, Inc.",
+      "org": "Edgecast Inc.",
+      "asn": "AS15133"
     },
     "intel": {
-      "whois_raw": "Domain Name: EXAMPLE.COM\nCreation Date: 1995-08-14",
+      "whois_raw": "Domain Name: EXAMPLE.COM\nRegistrar: RESERVED-Internet Assigned Numbers Authority\nRegistrar IANA ID: 376\nRegistrar URL: http://res-dom.iana.org\nUpdated Date: 2023-08-14T07:01:44Z\nCreation Date: 1995-08-14T04:00:00Z\nRegistry Expiry Date: 2024-08-13T04:00:00Z\nRegistrar Abuse Contact Email: abuse@iana.org\nRegistrar Abuse Contact Phone: +1.3108239358",
       "whois_emails": [
         "admin@example.com",
-        "tech@example.com"
+        "tech@example.com",
+        "abuse@iana.org"
       ],
-      "whois_org": "IANA",
+      "whois_org": "Internet Assigned Numbers Authority",
       "whois_country": "US",
       "whois_created": "1995-08-14",
       "whois_expires": "2024-08-13",
-      "asn": "AS15133",
-      "ip_range": "93.184.216.0/24",
-      "geoip": {
-        "country": "United States",
-        "region": "Massachusetts",
-        "city": "Norwood",
-        "isp": "Verizon Business",
-        "org": "Edgecast Inc.",
-        "asn": "AS15133",
-        "timezone": "America/New_York"
-      },
-      "reverse_ip": [
-        "demo.example.com",
-        "example.com"
+      "whois_registrar": "RESERVED \u2014 IANA",
+      "misconfigs": [
+        "Missing Content-Security-Policy header"
       ],
       "os_guess": "Linux / Unix (TTL=54)",
-      "misconfigs": [],
-      "shodan_data": {},
-      "cve_list": [],
-      "leaked_creds": []
+      "reverse_ip": [
+        "example.com",
+        "www.example.com",
+        "docs.example.com"
+      ]
     },
     "subdomains": [
       "admin.example.com",
       "api.example.com",
       "auth.example.com",
+      "beta.example.com",
       "blog.example.com",
       "cdn.example.com",
       "dashboard.example.com",
       "dev.example.com",
       "docs.example.com",
+      "git.example.com",
+      "grafana.example.com",
+      "jenkins.example.com",
+      "kibana.example.com",
+      "legacy.example.com",
       "mail.example.com",
+      "portal.example.com",
+      "shop.example.com",
+      "sso.example.com",
       "staging.example.com",
+      "static.example.com",
+      "status.example.com",
+      "support.example.com",
       "vpn.example.com",
       "www.example.com"
     ],
+    "dorks": [
+      {
+        "query": "site:example.com inurl:login | site:example.com inurl:admin",
+        "category": "login_panels",
+        "results": [
+          "https://example.com/admin/login",
+          "https://example.com/wp-login.php",
+          "https://portal.example.com/auth"
+        ],
+        "total_found": 3,
+        "note": ""
+      },
+      {
+        "query": "site:example.com inurl:wp-admin | site:example.com inurl:administrator",
+        "category": "admin_panels",
+        "results": [
+          "https://example.com/wp-admin/",
+          "https://example.com/wp-admin/admin-ajax.php"
+        ],
+        "total_found": 2,
+        "note": ""
+      },
+      {
+        "query": "site:example.com ext:env \"DB_PASSWORD\" | site:example.com ext:xml | ext:conf",
+        "category": "config_files",
+        "results": [
+          "https://example.com/config.xml.bak",
+          "https://example.com/phpinfo.php"
+        ],
+        "total_found": 2,
+        "note": ""
+      },
+      {
+        "query": "site:example.com ext:pdf | ext:docx confidential | site:example.com ext:log",
+        "category": "sensitive_docs",
+        "results": [],
+        "total_found": 0,
+        "note": "No results returned (search engine may have blocked automated queries)"
+      },
+      {
+        "query": "site:example.com intitle:\"index of\" | site:example.com intitle:\"Index of /\" \".git\"",
+        "category": "exposed_dirs",
+        "results": [
+          "https://example.com/files/",
+          "https://dev.example.com/logs/"
+        ],
+        "total_found": 2,
+        "note": ""
+      },
+      {
+        "query": "site:example.com inurl:/api/ | site:example.com inurl:/v1/ | site:api.example.com",
+        "category": "api_endpoints",
+        "results": [
+          "https://api.example.com/v1/users",
+          "https://api.example.com/v2/status",
+          "https://example.com/api/health"
+        ],
+        "total_found": 3,
+        "note": ""
+      },
+      {
+        "query": "site:example.com -www | site:example.com -inurl:www",
+        "category": "subdomains",
+        "results": [
+          "https://api.example.com",
+          "https://staging.example.com",
+          "https://cdn.example.com",
+          "https://docs.example.com"
+        ],
+        "total_found": 4,
+        "note": ""
+      },
+      {
+        "query": "site:example.com \"SQL syntax\" | \"mysql_fetch\" | site:example.com \"stack trace\"",
+        "category": "error_pages",
+        "results": [],
+        "total_found": 0,
+        "note": "No results returned (search engine may have blocked automated queries)"
+      }
+    ],
+    "github_leaks": [
+      {
+        "repo_url": "https://github.com/somedev/example-app",
+        "file_path": "config/database.yml",
+        "leak_type": "Password",
+        "match": "passwo******",
+        "severity": "MEDIUM",
+        "raw_url": "https://github.com/somedev/example-app/blob/main/config/database.yml"
+      },
+      {
+        "repo_url": "https://github.com/anotherdev/example-integration",
+        "file_path": ".env.example",
+        "leak_type": "AWS Access Key ID",
+        "match": "AKIAIO******",
+        "severity": "HIGH",
+        "raw_url": "https://github.com/anotherdev/example-integration/blob/main/.env.example"
+      },
+      {
+        "repo_url": "https://github.com/devteam/internal-scripts",
+        "file_path": "deploy/secrets.yml",
+        "leak_type": "API Key",
+        "match": "sk_live_******",
+        "severity": "HIGH",
+        "raw_url": "https://github.com/devteam/internal-scripts/blob/main/deploy/secrets.yml"
+      }
+    ],
+    "web": {
+      "url": "https://example.com",
+      "status_code": 200,
+      "server": "nginx/1.24.0",
+      "title": "Example Domain \u2014 Security Testing Demo",
+      "technologies": [
+        "Nginx",
+        "PHP",
+        "WordPress",
+        "React",
+        "Google Analytics",
+        "Google Tag Manager"
+      ],
+      "headers": {
+        "server": "nginx/1.24.0",
+        "content-type": "text/html; charset=UTF-8",
+        "x-powered-by": "PHP/8.2.10",
+        "cache-control": "max-age=3600",
+        "x-frame-options": "SAMEORIGIN",
+        "x-content-type-options": "nosniff",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "x-request-id": "req-abc123-def456",
+        "vary": "Accept-Encoding",
+        "referrer-policy": "strict-origin-when-cross-origin"
+      },
+      "cookies": [
+        "session=abc123xyzdef; HttpOnly; Secure; SameSite=Lax; Path=/",
+        "csrf_token=xyz789pqr; Path=/; Secure"
+      ],
+      "robots_txt": "User-agent: *\nDisallow: /admin/\nDisallow: /wp-admin/\nDisallow: /private/\nDisallow: /api/internal/\nSitemap: https://example.com/sitemap.xml",
+      "sitemap": "",
+      "https_redirect": true,
+      "hsts": true,
+      "cdn_waf": [
+        "Cloudflare",
+        "Nginx WAF"
+      ],
+      "directories": [
+        "https://example.com/admin [403]",
+        "https://example.com/wp-admin [301]",
+        "https://example.com/api [200]",
+        "https://example.com/backup [403]",
+        "https://example.com/.env [403]",
+        "https://example.com/phpinfo.php [403]"
+      ],
+      "misconfigs": [
+        "Missing header: content-security-policy",
+        "Missing header: permissions-policy",
+        "Server version disclosure: nginx/1.24.0",
+        "X-Powered-By disclosure: PHP/8.2.10",
+        "HTTP method allowed: OPTIONS \u2192 200",
+        "HTTP method allowed: PUT \u2192 405",
+        "HTTP method allowed: DELETE \u2192 405",
+        "HTTP method allowed: TRACE \u2192 403"
+      ],
+      "forms": [
+        "POST \u2192 /wp-login.php",
+        "GET \u2192 /search",
+        "POST \u2192 /api/contact",
+        "POST \u2192 /api/newsletter"
+      ],
+      "emails": [
+        "admin@example.com",
+        "webmaster@example.com",
+        "security@example.com"
+      ],
+      "comments": [
+        "TODO: remove debug mode before production deployment",
+        "Build: v2.4.1-beta (2025-03-15)",
+        "Analytics Tracking ID: UA-12345678-1"
+      ],
+      "js_files": [
+        "https://example.com/wp-includes/js/jquery/jquery.min.js",
+        "https://cdn.example.com/app.bundle.v2.js",
+        "https://www.googletagmanager.com/gtm.js?id=GTM-XXXXX",
+        "https://js.hs-scripts.com/2270269.js"
+      ],
+      "links": [],
+      "screenshot_b64": "",
+      "content_length": 48291,
+      "response_time": 0.342
+    },
+    "ssl": {
+      "enabled": true,
+      "version": "TLSv1.3",
+      "cipher": "TLS_AES_256_GCM_SHA384",
+      "issuer": "DigiCert Inc",
+      "subject": "example.com",
+      "valid_from": "Jan  1 00:00:00 2025 UTC",
+      "valid_to": "Jan  1 00:00:00 2026 UTC",
+      "expired": false,
+      "self_signed": false,
+      "san": [
+        "example.com",
+        "www.example.com",
+        "api.example.com",
+        "cdn.example.com"
+      ],
+      "vulnerabilities": [],
+      "grade": "A+"
+    },
+    "shodan": {
+      "ip": "93.184.216.34",
+      "org": "Edgecast Inc.",
+      "isp": "MCI Communications Services, Inc.",
+      "asn": "AS15133",
+      "country": "United States",
+      "city": "Norwood",
+      "hostnames": [
+        "example.com",
+        "www.example.com"
+      ],
+      "ports": [
+        22,
+        53,
+        80,
+        443,
+        6379,
+        8080,
+        8443
+      ],
+      "vulns": [
+        "CVE-2023-44487",
+        "CVE-2024-21626",
+        "CVE-2023-38545"
+      ],
+      "tags": [
+        "cloud",
+        "cdn",
+        "self-signed"
+      ],
+      "os": "Linux 3.x",
+      "last_update": "2025-03-28T09:15:22",
+      "banners": [
+        {
+          "port": 80,
+          "product": "nginx",
+          "version": "1.24.0",
+          "banner": "HTTP/1.1 200 OK Server: nginx/1.24.0"
+        },
+        {
+          "port": 443,
+          "product": "nginx",
+          "version": "1.24.0",
+          "banner": "HTTP/1.1 200 OK Strict-Transport-Security: max-age=31536000"
+        },
+        {
+          "port": 22,
+          "product": "OpenSSH",
+          "version": "9.2p1",
+          "banner": "SSH-2.0-OpenSSH_9.2p1 Ubuntu-3ubuntu0.6"
+        },
+        {
+          "port": 6379,
+          "product": "Redis",
+          "version": "7.0.11",
+          "banner": "redis_version:7.0.11 redis_mode:standalone"
+        },
+        {
+          "port": 8080,
+          "product": "nginx",
+          "version": "1.24.0",
+          "banner": "HTTP/1.1 301 Moved Permanently"
+        }
+      ],
+      "error": ""
+    },
     "stats": {
-      "open_ports": 4,
-      "closed_ports": 1,
-      "filtered_ports": 1,
-      "total_scanned": 6,
-      "subdomains": 12,
+      "open_ports": 7,
+      "closed_ports": 2,
+      "filtered_ports": 5,
+      "total_scanned": 14,
+      "subdomains": 24,
       "top_service": "HTTPS",
-      "findings": 6,
+      "findings": 12,
+      "github_leaks": 3,
+      "shodan_cves": 3,
+      "dork_categories": 8,
+      "scan_duration": 226.3,
       "service_counts": {
         "SSH": 1,
+        "DNS": 1,
         "HTTP": 1,
         "HTTPS": 1,
-        "HTTP-Proxy": 1
-      },
-      "scan_duration": 226.3
+        "Redis": 1,
+        "HTTP-Proxy": 1,
+        "HTTPS-Alt": 1
+      }
     },
-    "warnings": []
+    "warnings": [
+      "Firewall detected: Stateful Firewall / ICMP-filtered hops",
+      "Load balancer detected (server header variance)",
+      "Shodan found 3 CVEs: CVE-2023-44487, CVE-2024-21626, CVE-2023-38545",
+      "2 HIGH severity GitHub secret leaks found"
+    ]
   }
 }

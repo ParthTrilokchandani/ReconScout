@@ -3,298 +3,202 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ReconScout :: demo.example.com</title>
+<title>ReconScout :: example.com</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap');
-
-:root {
-  --bg:      #060911;
-  --surface: #0b1120;
-  --card:    #0f1929;
-  --card2:   #131f30;
-  --border:  #1b2d45;
-  --border2: #243550;
-  --accent:  #00e5ff;
-  --accent2: #7c3aed;
-  --green:   #00e676;
-  --yellow:  #ffd740;
-  --red:     #ff5252;
-  --orange:  #ff9800;
-  --text:    #c8d6e8;
-  --muted:   #4a6080;
-  --dim:     #2d4060;
-  --mono:    'JetBrains Mono', monospace;
-  --sans:    'Space Grotesk', sans-serif;
+:root{
+  --bg:#060911;--surface:#0b1120;--card:#0f1929;--border:#1b2d45;--border2:#243550;
+  --accent:#00e5ff;--accent2:#7c3aed;--green:#00e676;--yellow:#ffd740;--red:#ff5252;
+  --orange:#ff9800;--text:#c8d6e8;--muted:#4a6080;--dim:#2d4060;
+  --mono:'JetBrains Mono',monospace;--sans:'Space Grotesk',sans-serif;
 }
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-body {
-  background: var(--bg); color: var(--text);
-  font-family: var(--sans); font-size: 14px; line-height: 1.6;
-  min-height: 100vh;
-}
-
-/* SCROLLBAR */
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: var(--surface); }
-::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
-::selection { background: rgba(0,229,255,0.15); }
-
-/* ── SIDEBAR NAV ─────────────────────────────────────────── */
-.sidebar {
-  position: fixed; left: 0; top: 0; bottom: 0;
-  width: 220px; background: var(--surface);
-  border-right: 1px solid var(--border);
-  display: flex; flex-direction: column;
-  z-index: 100; overflow-y: auto;
-}
-.sidebar-logo {
-  padding: 20px 20px 16px;
-  border-bottom: 1px solid var(--border);
-}
-.sidebar-logo .tool-name {
-  font-size: 15px; font-weight: 700; color: var(--accent);
-  letter-spacing: 3px; text-transform: uppercase;
-}
-.sidebar-logo .tool-ver { font-size: 10px; color: var(--muted); font-family: var(--mono); }
-.sidebar-logo .tool-author { font-size: 10px; color: var(--accent2); font-family: var(--mono); margin-top: 2px; letter-spacing: 0.5px; }
-.sidebar-logo .target-name { font-size: 11px; color: var(--text); margin-top: 8px; font-family: var(--mono); word-break: break-all; }
-.nav-section { padding: 12px 0; border-bottom: 1px solid var(--border); }
-.nav-label { padding: 4px 20px 2px; font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; }
-.nav-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 8px 20px; font-size: 12px; color: var(--muted);
-  cursor: pointer; transition: all .15s;
-  text-decoration: none;
-}
-.nav-item:hover { color: var(--accent); background: rgba(0,229,255,0.04); }
-.nav-item .nav-icon { font-size: 14px; width: 18px; text-align: center; }
-.sidebar-stats { padding: 16px 20px; margin-top: auto; border-top: 1px solid var(--border); }
-.sidebar-stat { display: flex; justify-content: space-between; padding: 3px 0; font-size: 11px; font-family: var(--mono); }
-.sidebar-stat-key { color: var(--muted); }
-.sidebar-stat-val { color: var(--accent); font-weight: 700; }
-
-/* ── MAIN LAYOUT ─────────────────────────────────────────── */
-.main { margin-left: 220px; min-height: 100vh; }
-.topbar {
-  background: var(--surface); border-bottom: 1px solid var(--border);
-  padding: 16px 32px; display: flex; align-items: center; justify-content: space-between;
-  position: sticky; top: 0; z-index: 50;
-}
-.topbar-left h1 { font-size: 16px; font-weight: 600; color: var(--text); }
-.topbar-left p  { font-size: 11px; color: var(--muted); font-family: var(--mono); }
-.topbar-right   { display: flex; gap: 8px; }
-.pill {
-  padding: 4px 12px; font-size: 10px; font-family: var(--mono);
-  border: 1px solid; letter-spacing: 1px; text-transform: uppercase;
-}
-.pill-active   { color: var(--green);  border-color: rgba(0,230,118,0.4); background: rgba(0,230,118,0.06); }
-.pill-passive  { color: var(--accent); border-color: rgba(0,229,255,0.4); background: rgba(0,229,255,0.06); }
-.pill-duration { color: var(--yellow); border-color: rgba(255,215,64,0.4); background: rgba(255,215,64,0.06); }
-.pill-author   { color: var(--accent2); border-color: rgba(124,58,237,0.4); background: rgba(124,58,237,0.07); letter-spacing: 0.5px; }
-
-.disclaimer-bar {
-  background: rgba(255,82,82,0.07); border-bottom: 1px solid rgba(255,82,82,0.2);
-  padding: 7px 32px; font-family: var(--mono); font-size: 10px;
-  color: #ff8a80; letter-spacing: 1px; text-align: center;
-}
-
-.content { padding: 24px 32px 48px; }
-
-/* ── STAT CARDS ──────────────────────────────────────────── */
-.stats-row { display: grid; grid-template-columns: repeat(5,1fr); gap: 14px; margin-bottom: 20px; }
-.stat-card {
-  background: var(--card); border: 1px solid var(--border);
-  padding: 18px 20px; position: relative; overflow: hidden;
-  transition: border-color .2s, transform .1s;
-}
-.stat-card:hover { border-color: var(--border2); transform: translateY(-1px); }
-.stat-card::before {
-  content: ''; position: absolute; top: 0; left: 0;
-  width: 2px; height: 100%;
-}
-.stat-card.c::before { background: var(--accent);  }
-.stat-card.g::before { background: var(--green);   }
-.stat-card.r::before { background: var(--red);     }
-.stat-card.y::before { background: var(--yellow);  }
-.stat-card.p::before { background: var(--accent2); }
-.stat-val   { font-size: 34px; font-weight: 700; font-family: var(--mono); line-height: 1; }
-.stat-card.c .stat-val { color: var(--accent);  }
-.stat-card.g .stat-val { color: var(--green);   }
-.stat-card.r .stat-val { color: var(--red);     }
-.stat-card.y .stat-val { color: var(--yellow);  }
-.stat-card.p .stat-val { color: #a78bfa;        }
-.stat-label { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; margin-top: 6px; }
-
-/* ── SECTIONS ────────────────────────────────────────────── */
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-.section { background: var(--card); border: 1px solid var(--border); margin-bottom: 16px; }
-.section.full { }
-.section-header {
-  padding: 12px 20px; border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; gap: 10px;
-  background: rgba(255,255,255,0.01);
-}
-.s-icon  { font-size: 15px; }
-.s-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 2.5px; color: var(--accent); font-family: var(--mono); }
-.section-body { padding: 18px 20px; }
-.section-body.pad0 { padding: 0; }
-
-/* ── TWO-COL ─────────────────────────────────────────────── */
-.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-
-/* ── INFO ROWS ───────────────────────────────────────────── */
-.info-row { display: flex; padding: 6px 0; border-bottom: 1px solid rgba(27,45,69,0.5); }
-.info-row:last-child { border-bottom: none; }
-.info-key { width: 140px; flex-shrink: 0; color: var(--muted); font-size: 11px; font-family: var(--mono); padding-top: 1px; }
-.info-val { font-size: 12px; font-family: var(--sans); color: var(--text); word-break: break-all; }
-.info-val.mono { font-family: var(--mono); font-size: 11px; }
-
-/* ── TABLES ──────────────────────────────────────────────── */
-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 11px; }
-table.compact { font-size: 11px; }
-th {
-  text-align: left; padding: 8px 12px; color: var(--muted); font-size: 10px;
-  text-transform: uppercase; letter-spacing: 1.5px;
-  border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.01);
-  font-family: var(--sans); font-weight: 600;
-}
-td { padding: 8px 12px; border-bottom: 1px solid rgba(27,45,69,0.4); vertical-align: top; }
-tr:hover td { background: rgba(0,229,255,0.02); }
-tr:last-child td { border-bottom: none; }
-td.banner { color: var(--muted); font-size: 10px; max-width: 250px; word-break: break-all; }
-tr.dim-row td { opacity: 0.55; }
-
-/* ── BADGES ──────────────────────────────────────────────── */
-.badge { display: inline-block; padding: 2px 8px; font-size: 9px; font-weight: 700; font-family: var(--mono); letter-spacing: 1px; text-transform: uppercase; }
-.badge-open     { background: rgba(0,230,118,0.1); border: 1px solid rgba(0,230,118,0.35); color: var(--green); }
-.badge-closed   { background: rgba(255,82,82,0.08); border: 1px solid rgba(255,82,82,0.3); color: var(--red); }
-.badge-filtered { background: rgba(255,215,64,0.07); border: 1px solid rgba(255,215,64,0.3); color: var(--yellow); }
-.badge-info     { background: rgba(0,229,255,0.07); border: 1px solid rgba(0,229,255,0.3); color: var(--accent); }
-
-.tech-badge, .cdn-badge, .subdomain-tag, .js-tag, .method-tag, .cpe-tag {
-  display: inline-block; margin: 3px; padding: 3px 10px; font-size: 10px; font-family: var(--mono);
-}
-.tech-badge  { background: rgba(124,58,237,0.1); border: 1px solid rgba(124,58,237,0.3); color: #c4b5fd; }
-.cdn-badge   { background: rgba(255,215,64,0.07); border: 1px solid rgba(255,215,64,0.3); color: var(--yellow); }
-.subdomain-tag { background: rgba(0,229,255,0.05); border: 1px solid rgba(0,229,255,0.2); color: var(--accent); }
-.js-tag      { background: rgba(255,152,0,0.07); border: 1px solid rgba(255,152,0,0.25); color: var(--orange); font-size: 9px; word-break: break-all; }
-.method-tag  { background: rgba(255,82,82,0.1); border: 1px solid rgba(255,82,82,0.3); color: var(--red); }
-.cpe-tag     { background: rgba(100,116,139,0.1); border: 1px solid rgba(100,116,139,0.2); color: var(--muted); font-size: 9px; }
-.rtag        { display: inline-block; padding: 1px 7px; font-size: 9px; background: rgba(0,229,255,0.07); border: 1px solid rgba(0,229,255,0.2); color: var(--accent); letter-spacing: 1px; }
-.bold        { font-weight: 700; }
-.mono        { font-family: var(--mono); }
-.dim         { color: var(--muted); }
-.small       { font-size: 10px; }
-
-/* ── FINDINGS / ALERTS ───────────────────────────────────── */
-.finding     { padding: 8px 14px; margin: 4px 0; background: rgba(255,82,82,0.05); border-left: 2px solid rgba(255,82,82,0.5); font-family: var(--mono); font-size: 11px; }
-.warn-icon   { color: var(--red); margin-right: 8px; }
-.ok          { color: var(--green); font-family: var(--mono); font-size: 11px; padding: 8px 0; }
-.empty       { color: var(--muted); font-family: var(--mono); font-size: 11px; padding: 12px 0; font-style: italic; }
-.alert       { padding: 10px 16px; margin-bottom: 12px; font-family: var(--mono); font-size: 11px; border-left: 3px solid; }
-.alert-crit  { background: rgba(255,82,82,0.1); border-color: var(--red); color: #fca5a5; }
-.item-row    { padding: 4px 0; font-family: var(--mono); font-size: 11px; color: var(--text); border-bottom: 1px solid rgba(27,45,69,0.3); }
-.comment-block { background: rgba(255,215,64,0.04); border: 1px solid rgba(255,215,64,0.15); padding: 8px 12px; margin: 4px 0; font-family: var(--mono); font-size: 10px; color: var(--muted); word-break: break-all; }
-.subdomain-grid { display: flex; flex-wrap: wrap; gap: 4px; }
-
-/* ── SSL ─────────────────────────────────────────────────── */
-.ssl-grade { font-size: 48px; font-weight: 700; font-family: var(--mono); margin-bottom: 12px; }
-
-/* ── LABELS ──────────────────────────────────────────────── */
-.label { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; font-family: var(--mono); margin-top: 14px; margin-bottom: 6px; }
-.label.mt { margin-top: 18px; }
-
-/* ── CHARTS ──────────────────────────────────────────────── */
-.chart-wrap { position: relative; height: 200px; }
-
-/* ── PRE / CODE ──────────────────────────────────────────── */
-pre {
-  background: rgba(0,0,0,0.5); border: 1px solid var(--border);
-  padding: 12px; font-family: var(--mono); font-size: 10px; color: var(--muted);
-  overflow: auto; max-height: 280px; white-space: pre-wrap; line-height: 1.5; margin-top: 8px;
-}
-details .expand-toggle {
-  cursor: pointer; color: var(--muted); font-size: 10px; font-family: var(--mono);
-  padding: 6px 0; user-select: none; list-style: none;
-}
-details .expand-toggle:hover { color: var(--accent); }
-details[open] .expand-toggle { color: var(--accent); }
-
-/* ── FOOTER ──────────────────────────────────────────────── */
-.footer {
-  text-align: center; padding: 20px 32px;
-  font-family: var(--mono); font-size: 10px; color: var(--muted);
-  border-top: 1px solid var(--border); letter-spacing: 1px;
-  margin-left: 220px;
-}
-
-/* ── RESPONSIVE ──────────────────────────────────────────── */
-@media (max-width:1100px) {
-  .sidebar { display:none; }
-  .main,.footer { margin-left:0; }
-  .stats-row { grid-template-columns: repeat(3,1fr); }
-  .two-col { grid-template-columns: 1fr; }
-  .grid-2  { grid-template-columns: 1fr; }
-}
-@media (max-width:600px) {
-  .stats-row { grid-template-columns: 1fr 1fr; }
-  .content { padding: 16px; }
-}
-</style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;line-height:1.6;min-height:100vh}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--surface)}
+::-webkit-scrollbar-thumb{background:var(--border2)}
+::selection{background:rgba(0,229,255,0.15)}
+/* SIDEBAR */
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:220px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100;overflow-y:auto}
+.sidebar-logo{padding:18px 18px 14px;border-bottom:1px solid var(--border)}
+.logo-name{font-size:15px;font-weight:700;color:var(--accent);letter-spacing:3px;text-transform:uppercase}
+.logo-ver{font-size:10px;color:var(--muted);font-family:var(--mono)}
+.logo-author{font-size:10px;color:var(--accent2);font-family:var(--mono);margin-top:1px}
+.logo-target{font-size:11px;color:var(--text);margin-top:8px;font-family:var(--mono);word-break:break-all}
+.nav-group{padding:10px 0;border-bottom:1px solid var(--border)}
+.nav-label{padding:3px 18px 1px;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:2px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:7px 18px;font-size:12px;color:var(--muted);text-decoration:none;transition:all .15s}
+.nav-item:hover{color:var(--accent);background:rgba(0,229,255,0.04)}
+.nav-icon{font-size:13px;width:16px;text-align:center}
+.sidebar-stats{padding:14px 18px;margin-top:auto;border-top:1px solid var(--border)}
+.ss{display:flex;justify-content:space-between;padding:2px 0;font-size:11px;font-family:var(--mono)}
+.ss-k{color:var(--muted)}.ss-v{color:var(--accent);font-weight:700}
+/* MAIN */
+.main{margin-left:220px;min-height:100vh}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar-left h1{font-size:15px;font-weight:600;color:var(--text)}
+.topbar-left p{font-size:10px;color:var(--muted);font-family:var(--mono)}
+.topbar-right{display:flex;gap:7px}
+.pill{padding:3px 10px;font-size:10px;font-family:var(--mono);border:1px solid;letter-spacing:1px;text-transform:uppercase}
+.pill-active{color:var(--green);border-color:rgba(0,230,118,.4);background:rgba(0,230,118,.06)}
+.pill-passive{color:var(--accent);border-color:rgba(0,229,255,.4);background:rgba(0,229,255,.06)}
+.pill-duration{color:var(--yellow);border-color:rgba(255,215,64,.4);background:rgba(255,215,64,.06)}
+.pill-author{color:var(--accent2);border-color:rgba(124,58,237,.4);background:rgba(124,58,237,.07)}
+.disclaimer-bar{background:rgba(255,82,82,.07);border-bottom:1px solid rgba(255,82,82,.2);padding:6px 28px;font-family:var(--mono);font-size:10px;color:#ff8a80;letter-spacing:1px;text-align:center}
+.content{padding:22px 28px 48px}
+/* STAT CARDS */
+.stats-row{display:grid;grid-template-columns:repeat(7,1fr);gap:12px;margin-bottom:18px}
+.stat-card{background:var(--card);border:1px solid var(--border);padding:16px 18px;position:relative;overflow:hidden;transition:border-color .2s}
+.stat-card:hover{border-color:var(--border2)}
+.stat-card::before{content:'';position:absolute;top:0;left:0;width:2px;height:100%}
+.sc{color:var(--accent)}.sc::before{background:var(--accent)}
+.sg{color:var(--green)}.sg::before{background:var(--green)}
+.sr{color:var(--red)}.sr::before{background:var(--red)}
+.sy{color:var(--yellow)}.sy::before{background:var(--yellow)}
+.sp{color:#a78bfa}.sp::before{background:var(--accent2)}
+.so{color:var(--orange)}.so::before{background:var(--orange)}
+.stat-val{font-size:28px;font-weight:700;font-family:var(--mono);line-height:1}
+.stat-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-top:5px}
+/* SECTIONS */
+.section{background:var(--card);border:1px solid var(--border);margin-bottom:14px}
+.section-header{padding:11px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.01)}
+.s-icon{font-size:14px}.s-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:var(--accent);font-family:var(--mono)}
+.s-badge{font-size:10px;padding:1px 7px;background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.2);color:var(--accent);font-family:var(--mono)}
+.section-body{padding:16px 18px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+/* INFO ROWS */
+.info-row{display:flex;padding:5px 0;border-bottom:1px solid rgba(27,45,69,.5)}
+.info-row:last-child{border-bottom:none}
+.info-key{width:130px;flex-shrink:0;color:var(--muted);font-size:11px;font-family:var(--mono);padding-top:1px}
+.info-val{font-size:12px;color:var(--text);word-break:break-all}.info-val.mono{font-family:var(--mono);font-size:11px}
+/* SCROLLABLE TABLES */
+.scroll-table{max-height:320px;overflow-y:auto;border:1px solid var(--border);position:relative}
+.scroll-table table{margin:0;border-collapse:separate;border-spacing:0}
+/* TABLES */
+table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px}
+th{text-align:left;padding:7px 11px;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:1.5px;border-bottom:2px solid var(--border2);background:var(--surface);position:sticky;top:0;z-index:10;font-family:var(--sans);font-weight:600;box-shadow:0 1px 0 var(--border2)}
+.scroll-table th{position:sticky;top:0;z-index:10;background:var(--surface)}
+td{padding:7px 11px;border-bottom:1px solid rgba(27,45,69,.4);vertical-align:top}
+tr:hover td{background:rgba(0,229,255,.02)}
+tr:last-child td{border-bottom:none}
+.banner{color:var(--muted);font-size:10px;max-width:220px;word-break:break-all}
+tr.dim-row td{opacity:.55}
+/* BADGES */
+.badge{display:inline-block;padding:2px 8px;font-size:9px;font-weight:700;font-family:var(--mono);letter-spacing:1px;text-transform:uppercase;border:1px solid}
+.badge-open{background:rgba(0,230,118,.1);border-color:rgba(0,230,118,.35);color:var(--green)}
+.badge-closed{background:rgba(255,82,82,.08);border-color:rgba(255,82,82,.3);color:var(--red)}
+.badge-filtered{background:rgba(255,215,64,.07);border-color:rgba(255,215,64,.3);color:var(--yellow)}
+.badge-info{background:rgba(0,229,255,.07);border-color:rgba(0,229,255,.3);color:var(--accent)}
+.tech-badge,.cdn-badge,.subdomain-tag,.cpe-tag{display:inline-block;margin:3px;padding:3px 9px;font-size:10px;font-family:var(--mono)}
+.tech-badge{background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.3);color:#c4b5fd}
+.cdn-badge{background:rgba(255,215,64,.07);border:1px solid rgba(255,215,64,.3);color:var(--yellow)}
+.subdomain-tag{background:rgba(0,229,255,.05);border:1px solid rgba(0,229,255,.2);color:var(--accent)}
+.cpe-tag{background:rgba(100,116,139,.1);border:1px solid rgba(100,116,139,.2);color:var(--muted);font-size:9px}
+.rtag{display:inline-block;padding:1px 7px;font-size:9px;background:rgba(0,229,255,.07);border:1px solid rgba(0,229,255,.2);color:var(--accent);letter-spacing:1px}
+.bold{font-weight:700}.mono{font-family:var(--mono)}.dim{color:var(--muted)}.small{font-size:10px}
+.green{color:var(--green)}
+/* MISC */
+.subdomain-grid{display:flex;flex-wrap:wrap;gap:4px}
+.finding{padding:7px 12px;margin:3px 0;background:rgba(255,82,82,.05);border-left:2px solid rgba(255,82,82,.5);font-family:var(--mono);font-size:11px}
+.warn-icon{color:var(--red);margin-right:7px}
+.ok{color:var(--green);font-family:var(--mono);font-size:11px;padding:7px 0}
+.empty{color:var(--muted);font-family:var(--mono);font-size:11px;padding:10px 0;font-style:italic}
+.item-row{padding:3px 0;font-family:var(--mono);font-size:11px;color:var(--text);border-bottom:1px solid rgba(27,45,69,.3)}
+.comment-block{background:rgba(255,215,64,.04);border:1px solid rgba(255,215,64,.15);padding:7px 11px;margin:3px 0;font-family:var(--mono);font-size:10px;color:var(--muted);word-break:break-all}
+.alert{padding:9px 13px;margin:4px 0;font-family:var(--mono);font-size:11px;border-left:3px solid}
+.alert-warn{background:rgba(255,215,64,.07);border-color:var(--yellow);color:var(--yellow)}
+.alert-crit{background:rgba(255,82,82,.1);border-color:var(--red);color:#fca5a5}
+.alert-ok{background:rgba(0,230,118,.07);border-color:var(--green);color:var(--green)}
+.ssl-grade{font-size:44px;font-weight:700;font-family:var(--mono);margin-bottom:10px}
+.label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;font-family:var(--mono);margin-top:12px;margin-bottom:5px}
+.label.mt{margin-top:16px}
+.chart-wrap{position:relative;height:200px}
+.dork-category{margin-bottom:12px;background:rgba(0,0,0,.2);border:1px solid var(--border);padding:10px 14px}
+.dork-cat-title{margin-bottom:8px}
+.dork-link{color:var(--accent);font-size:10px;word-break:break-all;text-decoration:none}
+.dork-link:hover{text-decoration:underline}
+/* JS file cards */
+.js-file-grid{display:flex;flex-direction:column;gap:6px;margin-top:4px}
+.js-file-card{display:flex;align-items:flex-start;gap:8px;padding:7px 12px;
+  background:rgba(255,152,0,.05);border:1px solid rgba(255,152,0,.2);
+  text-decoration:none;transition:border-color .15s;border-left:3px solid var(--orange)}
+.js-file-card:hover{border-color:rgba(255,152,0,.5);background:rgba(255,152,0,.09)}
+.js-icon{color:var(--orange);font-family:var(--mono);font-size:11px;
+  flex-shrink:0;font-weight:700;padding-top:1px}
+.js-url{color:var(--text);font-family:var(--mono);font-size:11px;
+  word-break:break-all;line-height:1.4}
+pre{background:rgba(0,0,0,.5);border:1px solid var(--border);padding:11px;font-family:var(--mono);font-size:10px;color:var(--muted);overflow:auto;max-height:260px;white-space:pre-wrap;margin-top:7px}
+details summary{cursor:pointer;color:var(--muted);font-size:10px;font-family:var(--mono);padding:5px 0;user-select:none}
+details summary:hover{color:var(--accent)}
+.expand-toggle{cursor:pointer;color:var(--muted);font-size:10px;font-family:var(--mono)}
+.footer{text-align:center;padding:18px 28px;font-family:var(--mono);font-size:10px;color:var(--muted);border-top:1px solid var(--border);margin-left:220px;letter-spacing:1px}
+@media(max-width:1100px){.sidebar{display:none}.main,.footer{margin-left:0}.stats-row{grid-template-columns:repeat(4,1fr)}.two-col{grid-template-columns:1fr}.grid-2{grid-template-columns:1fr}}
+@media(max-width:600px){.stats-row{grid-template-columns:1fr 1fr}.content{padding:14px}}</style>
 </head>
 <body>
 
-<!-- SIDEBAR -->
 <aside class="sidebar">
   <div class="sidebar-logo">
-    <div class="tool-name">ReconScout</div>
-    <div class="tool-ver">v2.1 — Advanced Recon Suite</div>
-    <div class="tool-author">by Agent P</div>
-    <div class="target-name">⬡ demo.example.com</div>
+    <div class="logo-name">ReconScout</div>
+    <div class="logo-ver">v2.1 — Advanced Recon Suite</div>
+    <div class="logo-author">by Agent P</div>
+    <div class="logo-target">⬡ example.com</div>
   </div>
   <nav>
-    <div class="nav-section">
+    <div class="nav-group">
       <div class="nav-label">Overview</div>
-      <a href="#summary"    class="nav-item"><span class="nav-icon">🎯</span> Target Summary</a>
-      <a href="#charts"     class="nav-item"><span class="nav-icon">📊</span> Charts</a>
+      <a href="#summary"   class="nav-item"><span class="nav-icon">🎯</span> Target Summary</a>
+      <a href="#charts"    class="nav-item"><span class="nav-icon">📊</span> Charts</a>
     </div>
-    <div class="nav-section">
+    <div class="nav-group">
       <div class="nav-label">Active Recon</div>
-      <a href="#ports"      class="nav-item"><span class="nav-icon">🔓</span> Open Ports</a>
-      <a href="#allports"   class="nav-item"><span class="nav-icon">🔒</span> All Ports</a>
-      <a href="#network"    class="nav-item"><span class="nav-icon">🌐</span> Network Map</a>
-      <a href="#smtp"       class="nav-item"><span class="nav-icon">📧</span> SMTP</a>
+      <a href="#ports"     class="nav-item"><span class="nav-icon">🔓</span> Open Ports</a>
+      <a href="#allports"  class="nav-item"><span class="nav-icon">🔒</span> All Ports</a>
+      <a href="#network"   class="nav-item"><span class="nav-icon">🌐</span> Network Map</a>
+      <a href="#smtp"      class="nav-item"><span class="nav-icon">📧</span> SMTP</a>
     </div>
-    <div class="nav-section">
+    <div class="nav-group">
       <div class="nav-label">Passive Recon</div>
-      <a href="#dns"        class="nav-item"><span class="nav-icon">📡</span> DNS Records</a>
-      <a href="#whois"      class="nav-item"><span class="nav-icon">📋</span> WHOIS / Intel</a>
-      <a href="#subdomains" class="nav-item"><span class="nav-icon">🔍</span> Subdomains</a>
+      <a href="#dns"       class="nav-item"><span class="nav-icon">📡</span> DNS Records</a>
+      <a href="#whois"     class="nav-item"><span class="nav-icon">📋</span> WHOIS</a>
+      <a href="#asn"       class="nav-item"><span class="nav-icon">🔢</span> ASN / BGP</a>
+      <a href="#geoip"     class="nav-item"><span class="nav-icon">🌍</span> GeoIP</a>
+      <a href="#subdomains"class="nav-item"><span class="nav-icon">🔍</span> Subdomains</a>
     </div>
-    <div class="nav-section">
+    <div class="nav-group">
+      <div class="nav-label">OSINT</div>
+      <a href="#dorks"     class="nav-item"><span class="nav-icon">🔎</span> Google Dorks</a>
+      <a href="#github"    class="nav-item"><span class="nav-icon">🐙</span> GitHub Leaks</a>
+      <a href="#shodan"    class="nav-item"><span class="nav-icon">🕵️</span> Shodan</a>
+    </div>
+    <div class="nav-group">
       <div class="nav-label">Web</div>
-      <a href="#ssl"        class="nav-item"><span class="nav-icon">🔐</span> SSL/TLS</a>
-      <a href="#web"        class="nav-item"><span class="nav-icon">🌍</span> Web Recon</a>
+      <a href="#ssl"       class="nav-item"><span class="nav-icon">🔐</span> SSL/TLS</a>
+      <a href="#web"       class="nav-item"><span class="nav-icon">🌏</span> Web Recon</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Alerts</div>
+      <a href="#warnings"  class="nav-item"><span class="nav-icon">⚠</span> Warnings</a>
     </div>
   </nav>
   <div class="sidebar-stats">
-    <div class="sidebar-stat"><span class="sidebar-stat-key">Open Ports</span><span class="sidebar-stat-val">4</span></div>
-    <div class="sidebar-stat"><span class="sidebar-stat-key">Subdomains</span><span class="sidebar-stat-val">12</span></div>
-    <div class="sidebar-stat"><span class="sidebar-stat-key">Findings</span><span class="sidebar-stat-val">2</span></div>
-    <div class="sidebar-stat"><span class="sidebar-stat-key">Duration</span><span class="sidebar-stat-val">226.3s</span></div>
+    <div class="ss"><span class="ss-k">Open Ports</span><span class="ss-v">7</span></div>
+    <div class="ss"><span class="ss-k">Subdomains</span><span class="ss-v">24</span></div>
+    <div class="ss"><span class="ss-k">Findings</span><span class="ss-v">12</span></div>
+    <div class="ss"><span class="ss-k">GH Leaks</span><span class="ss-v">3</span></div>
+    <div class="ss"><span class="ss-k">Shodan CVEs</span><span class="ss-v">3</span></div>
+    <div class="ss"><span class="ss-k">Duration</span><span class="ss-v">226.3s</span></div>
   </div>
 </aside>
 
-<!-- MAIN -->
 <div class="main">
-
 <div class="topbar">
   <div class="topbar-left">
-    <h1>⬡ demo.example.com</h1>
-    <p>2025-01-15 14:32:01 · DOMAIN · 93.184.216.34</p>
+    <h1>⬡ example.com</h1>
+    <p>2025-04-04 14:22:01 · DOMAIN · 93.184.216.34</p>
   </div>
   <div class="topbar-right">
     <span class="pill pill-author">by Agent P</span>
@@ -310,207 +214,201 @@ details[open] .expand-toggle { color: var(--accent); }
 
 <div class="content">
 
-<!-- STAT CARDS -->
 <div class="stats-row">
-  <div class="stat-card g"><div class="stat-val">4</div><div class="stat-label">Open Ports</div></div>
-  <div class="stat-card r"><div class="stat-val">1</div><div class="stat-label">Closed</div></div>
-  <div class="stat-card y"><div class="stat-val">1</div><div class="stat-label">Filtered</div></div>
-  <div class="stat-card p"><div class="stat-val">12</div><div class="stat-label">Subdomains</div></div>
-  <div class="stat-card c"><div class="stat-val">2</div><div class="stat-label">Findings</div></div>
+  <div class="stat-card sg"><div class="stat-val" style="color:var(--green)">7</div><div class="stat-label">Open Ports</div></div>
+  <div class="stat-card sr"><div class="stat-val" style="color:var(--red)">2</div><div class="stat-label">Closed</div></div>
+  <div class="stat-card sy"><div class="stat-val" style="color:var(--yellow)">5</div><div class="stat-label">Filtered</div></div>
+  <div class="stat-card sp"><div class="stat-val" style="color:#a78bfa">24</div><div class="stat-label">Subdomains</div></div>
+  <div class="stat-card sc"><div class="stat-val" style="color:var(--accent)">12</div><div class="stat-label">Findings</div></div>
+  <div class="stat-card so"><div class="stat-val" style="color:var(--orange)">3</div><div class="stat-label">GH Leaks</div></div>
+  <div class="stat-card sr"><div class="stat-val" style="color:var(--red)">3</div><div class="stat-label">CVEs</div></div>
 </div>
 
-<!-- TARGET SUMMARY -->
-<div id="summary">
 
-<div class="section full">
+<div class="section" id="summary">
   <div class="section-header">
     <span class="s-icon">🎯</span>
     <span class="s-title">Target Summary</span>
   </div>
-  <div class="section-body"><div class="two-col"><div class="info-row"><span class="info-key">Target</span><span class="info-val mono">demo.example.com</span></div><div class="info-row"><span class="info-key">Type</span><span class="info-val mono">DOMAIN</span></div><div class="info-row"><span class="info-key">IP Address</span><span class="info-val mono">93.184.216.34</span></div><div class="info-row"><span class="info-key">Hostname</span><span class="info-val mono">demo.example.com</span></div><div class="info-row"><span class="info-key">Scan Mode</span><span class="info-val mono">FULL</span></div><div class="info-row"><span class="info-key">Scan Type</span><span class="info-val mono">ACTIVE+PASSIVE</span></div><div class="info-row"><span class="info-key">OS Fingerprint</span><span class="info-val mono">Linux / Unix (TTL=54)</span></div><div class="info-row"><span class="info-key">ASN</span><span class="info-val mono">AS15133</span></div><div class="info-row"><span class="info-key">IP Range</span><span class="info-val mono">93.184.216.0/24</span></div><div class="info-row"><span class="info-key">Country</span><span class="info-val mono">United States</span></div><div class="info-row"><span class="info-key">Region</span><span class="info-val mono">Massachusetts</span></div><div class="info-row"><span class="info-key">City</span><span class="info-val mono">Norwood</span></div><div class="info-row"><span class="info-key">ISP</span><span class="info-val mono">Verizon Business</span></div><div class="info-row"><span class="info-key">Org</span><span class="info-val mono">Edgecast Inc.</span></div><div class="info-row"><span class="info-key">Timezone</span><span class="info-val mono">America/New_York</span></div><div class="info-row"><span class="info-key">Started</span><span class="info-val mono">2025-01-15 14:32:01</span></div><div class="info-row"><span class="info-key">Finished</span><span class="info-val mono">2025-01-15 14:35:47</span></div><div class="info-row"><span class="info-key">Duration</span><span class="info-val mono">226.3s</span></div><div class="info-row"><span class="info-key">Top Service</span><span class="info-val mono">HTTPS</span></div></div></div>
-</div>
-</div>
-
-<!-- CHARTS -->
-<div id="charts" class="grid-2">
-  <div class="section">
-    <div class="section-header"><span class="s-icon">📊</span><span class="s-title">Open Port Distribution</span></div>
-    <div class="section-body"><div class="chart-wrap"><canvas id="portChart"></canvas></div></div>
-  </div>
-  <div class="section">
-    <div class="section-header"><span class="s-icon">🔧</span><span class="s-title">Service Breakdown</span></div>
-    <div class="section-body"><div class="chart-wrap"><canvas id="svcChart"></canvas></div></div>
-  </div>
+  <div class="section-body"><div class="two-col"><div><div class="info-row"><span class="info-key">Target</span><span class="info-val mono">example.com</span></div><div class="info-row"><span class="info-key">Type</span><span class="info-val mono">DOMAIN</span></div><div class="info-row"><span class="info-key">IP Address</span><span class="info-val mono">93.184.216.34</span></div><div class="info-row"><span class="info-key">Hostname</span><span class="info-val mono">example.com</span></div><div class="info-row"><span class="info-key">Scan Mode</span><span class="info-val mono">FULL</span></div><div class="info-row"><span class="info-key">Scan Type</span><span class="info-val mono">ACTIVE+PASSIVE</span></div><div class="info-row"><span class="info-key">OS Fingerprint</span><span class="info-val mono">Linux / Unix (TTL=54)</span></div><div class="info-row"><span class="info-key">Started</span><span class="info-val mono">2025-04-04 14:22:01</span></div><div class="info-row"><span class="info-key">Finished</span><span class="info-val mono">2025-04-04 14:25:47</span></div><div class="info-row"><span class="info-key">Duration</span><span class="info-val mono">226.3s</span></div></div><div><div class="info-row"><span class="info-key">Country</span><span class="info-val mono">United States</span></div><div class="info-row"><span class="info-key">Region</span><span class="info-val mono">Massachusetts</span></div><div class="info-row"><span class="info-key">City</span><span class="info-val mono">Norwood</span></div><div class="info-row"><span class="info-key">Lat/Lon</span><span class="info-val mono">42.1654,-71.1995</span></div><div class="info-row"><span class="info-key">Timezone</span><span class="info-val mono">America/New_York</span></div><div class="info-row"><span class="info-key">ISP</span><span class="info-val mono">MCI Communications Services, Inc.</span></div><div class="info-row"><span class="info-key">Org</span><span class="info-val mono">Edgecast Inc.</span></div><div class="info-row"><span class="info-key">Findings</span><span class="info-val mono">12</span></div><div class="info-row"><span class="info-key">Top Svc</span><span class="info-val mono">HTTPS</span></div></div></div></div>
 </div>
 
-<!-- OPEN PORTS -->
-<div id="ports">
+<div class="grid-2" id="charts">
+  <div class="section"><div class="section-header"><span class="s-icon">📊</span><span class="s-title">Port Distribution</span></div>
+  <div class="section-body"><div class="chart-wrap"><canvas id="portChart"></canvas></div></div></div>
+  <div class="section"><div class="section-header"><span class="s-icon">🔧</span><span class="s-title">Service Breakdown</span></div>
+  <div class="section-body"><div class="chart-wrap"><canvas id="svcChart"></canvas></div></div></div>
+</div>
 
-<div class="section full">
+
+<div class="section" id="ports">
   <div class="section-header">
     <span class="s-icon">🔓</span>
-    <span class="s-title">Open Ports &amp; Services</span>
+    <span class="s-title">Open Ports &amp; Services <span class="s-badge">7</span></span>
   </div>
-  <div class="section-body"><div class="pad0"><table><thead><tr><th>Port</th><th>Proto</th><th>State</th><th>Service</th><th>Version</th><th>Banner</th><th>CPE</th></tr></thead><tbody><tr><td class='mono bold'>22</td><td>TCP</td><td><span class="badge badge-open">open</span></td><td class='mono'>SSH</td><td class='mono dim'>SSH-2.0-OpenSSH_9.2p1 Debian</td><td class='banner'>OpenSSH_9.2p1</td><td><span class="cpe-tag">cpe:/a:openbsd:openssh:9.2p1</span></td></tr><tr><td class='mono bold'>80</td><td>TCP</td><td><span class="badge badge-open">open</span></td><td class='mono'>HTTP</td><td class='mono dim'></td><td class='banner'></td><td></td></tr><tr><td class='mono bold'>443</td><td>TCP</td><td><span class="badge badge-open">open</span></td><td class='mono'>HTTPS</td><td class='mono dim'></td><td class='banner'></td><td></td></tr><tr><td class='mono bold'>8080</td><td>TCP</td><td><span class="badge badge-open">open</span></td><td class='mono'>HTTP-Proxy</td><td class='mono dim'>nginx/1.24.0</td><td class='banner'>nginx/1.24.0</td><td></td></tr></tbody></table></div></div>
-</div>
+  <div class="section-body"><div class="scroll-table"><table><thead><tr><th>Port</th><th>Proto</th><th>State</th><th>Service</th><th>Version</th><th>Banner</th><th>CPE</th></tr></thead><tbody><tr><td class='mono bold green'>22</td><td>TCP</td><td><span class="badge badge-open">open</span></td><td class='mono'>SSH</td><td class='mono dim'>SSH-2.0-OpenSSH_9.2p1 Ubuntu-3ubuntu0.6</td><td class='banner'>OpenSSH_9.2p1</td><td><span class='cpe-tag'>cpe:/a:openbsd:openssh:9.2p1</span></td></tr><tr><td class='mono bold green'>53</td><td>TCP</td><td><span class="badge badge-open">open</span></td><td class='mono'>DNS</td><td class='mono dim'>BIND 9.18.18-Ubuntu</td><td class='banner'>BIND 9.18</td><td><span class='cpe-tag'></span></td></tr><tr><td class='mono bold green'>80</td><td>TCP</td><td><span class="badge badge-open">open</span></td><td class='mono'>HTTP</td><td class='mono dim'></td><td class='banner'></td><td><span class='cpe-tag'></span></td></tr><tr><td class='mono bold green'>443</td><td>TCP</td><td><span class="badge badge-open">open</span></td><td class='mono'>HTTPS</td><td class='mono dim'></td><td class='banner'></td><td><span class='cpe-tag'></span></td></tr><tr><td class='mono bold green'>6379</td><td>TCP</td><td><span class="badge badge-open">open</span></td><td class='mono'>Redis</td><td class='mono dim'>redis_version:7.0.11</td><td class='banner'>7.0.11</td><td><span class='cpe-tag'></span></td></tr><tr><td class='mono bold green'>8080</td><td>TCP</td><td><span class="badge badge-open">open</span></td><td class='mono'>HTTP-Proxy</td><td class='mono dim'>nginx/1.24.0</td><td class='banner'>nginx/1.24.0</td><td><span class='cpe-tag'></span></td></tr><tr><td class='mono bold green'>8443</td><td>TCP</td><td><span class="badge badge-open">open</span></td><td class='mono'>HTTPS-Alt</td><td class='mono dim'></td><td class='banner'></td><td><span class='cpe-tag'></span></td></tr></tbody></table></div></div>
 </div>
 
-<!-- ALL PORTS -->
-<div id="allports">
-
-<div class="section full">
+<div class="section" id="allports">
   <div class="section-header">
     <span class="s-icon">🔒</span>
-    <span class="s-title">All Scanned Ports (Closed/Filtered)</span>
+    <span class="s-title">All Scanned Ports (Closed / Filtered) <span class="s-badge">7</span></span>
   </div>
-  <div class="section-body"><div class="pad0"><table><thead><tr><th>Port</th><th>Proto</th><th>State</th><th>Service</th></tr></thead><tbody><tr class='dim-row'><td class='mono'>3306</td><td>TCP</td><td><span class="badge badge-filtered">filtered</span></td><td class='mono dim'>MySQL</td></tr><tr class='dim-row'><td class='mono'>110</td><td>TCP</td><td><span class="badge badge-closed">closed</span></td><td class='mono dim'>POP3</td></tr></tbody></table></div></div>
-</div>
-</div>
-
-<!-- DNS + WHOIS -->
-<div class="grid-2">
-  <div id="dns">
-<div class="section">
-  <div class="section-header">
-    <span class="s-icon">📡</span>
-    <span class="s-title">DNS Records</span>
-  </div>
-  <div class="section-body"><table><thead><tr><th>Type</th><th>Value</th></tr></thead><tbody><tr><td><span class="rtag">A</span></td><td class='mono'>93.184.216.34</td></tr><tr><td><span class="rtag">MX</span></td><td class='mono'>0 mail.example.com</td></tr><tr><td><span class="rtag">NS</span></td><td class='mono'>a.iana-servers.net</td></tr><tr><td><span class="rtag">TXT</span></td><td class='mono'>v=spf1 -all</td></tr><tr><td><span class="rtag">TXT</span></td><td class='mono'>v=DMARC1; p=reject</td></tr><tr><td><span class="rtag">SOA</span></td><td class='mono'>ns1.example.com. 2024010101</td></tr><tr><td><span class="rtag">PTR</span></td><td class='mono'>demo.example.com</td></tr></tbody></table></div>
-</div></div>
-  <div id="whois">
-<div class="section">
-  <div class="section-header">
-    <span class="s-icon">📋</span>
-    <span class="s-title">WHOIS &amp; Intelligence</span>
-  </div>
-  <div class="section-body"><div class="info-row"><span class="info-key">Org</span><span class="info-val mono">IANA</span></div><div class="info-row"><span class="info-key">Country</span><span class="info-val mono">US</span></div><div class="info-row"><span class="info-key">Created</span><span class="info-val mono">1995-08-14</span></div><div class="info-row"><span class="info-key">Expires</span><span class="info-val mono">2024-08-13</span></div><div class="info-row"><span class="info-key">ASN</span><span class="info-val mono">AS15133</span></div><div class="info-row"><span class="info-key">IP Range</span><span class="info-val mono">93.184.216.0/24</span></div><div class="label mt">WHOIS Emails</div><span class="subdomain-tag">admin@example.com</span><span class="subdomain-tag">tech@example.com</span><div class='label mt'>Reverse IP Hosts</div><div class="item-row">demo.example.com</div><div class="item-row">example.com</div><details><summary class="expand-toggle">Raw WHOIS (click to expand)</summary><pre>Domain Name: EXAMPLE.COM
-Creation Date: 1995-08-14</pre></details></div>
-</div></div>
+  <div class="section-body"><div class="scroll-table"><table><thead><tr><th>Port</th><th>Proto</th><th>State</th><th>Service</th></tr></thead><tbody><tr class='dim-row'><td class='mono'>25</td><td>TCP</td><td><span class="badge badge-filtered">filtered</span></td><td class='mono dim'>SMTP</td></tr><tr class='dim-row'><td class='mono'>110</td><td>TCP</td><td><span class="badge badge-closed">closed</span></td><td class='mono dim'>POP3</td></tr><tr class='dim-row'><td class='mono'>143</td><td>TCP</td><td><span class="badge badge-closed">closed</span></td><td class='mono dim'>IMAP</td></tr><tr class='dim-row'><td class='mono'>445</td><td>TCP</td><td><span class="badge badge-filtered">filtered</span></td><td class='mono dim'>SMB</td></tr><tr class='dim-row'><td class='mono'>3306</td><td>TCP</td><td><span class="badge badge-filtered">filtered</span></td><td class='mono dim'>MySQL</td></tr><tr class='dim-row'><td class='mono'>5432</td><td>TCP</td><td><span class="badge badge-filtered">filtered</span></td><td class='mono dim'>PostgreSQL</td></tr><tr class='dim-row'><td class='mono'>9200</td><td>TCP</td><td><span class="badge badge-filtered">filtered</span></td><td class='mono dim'>Elasticsearch</td></tr></tbody></table></div></div>
 </div>
 
-<!-- SUBDOMAINS -->
-<div id="subdomains">
-
-<div class="section full">
-  <div class="section-header">
-    <span class="s-icon">🔍</span>
-    <span class="s-title">Subdomains Discovered (12)</span>
-  </div>
-  <div class="section-body"><div class="subdomain-grid"><span class="subdomain-tag">admin.example.com</span><span class="subdomain-tag">api.example.com</span><span class="subdomain-tag">auth.example.com</span><span class="subdomain-tag">blog.example.com</span><span class="subdomain-tag">cdn.example.com</span><span class="subdomain-tag">dashboard.example.com</span><span class="subdomain-tag">dev.example.com</span><span class="subdomain-tag">docs.example.com</span><span class="subdomain-tag">mail.example.com</span><span class="subdomain-tag">staging.example.com</span><span class="subdomain-tag">vpn.example.com</span><span class="subdomain-tag">www.example.com</span></div></div>
-</div>
-</div>
-
-<!-- SSL + NETWORK -->
-<div class="grid-2">
-  <div id="ssl">
-<div class="section">
-  <div class="section-header">
-    <span class="s-icon">🔐</span>
-    <span class="s-title">SSL/TLS Analysis</span>
-  </div>
-  <div class="section-body"><div class="ssl-grade" style="color:#00e676">A+</div><div class="info-row"><span class="info-key">Enabled</span><span class="info-val mono">Yes ✓</span></div><div class="info-row"><span class="info-key">Version</span><span class="info-val mono">TLSv1.3</span></div><div class="info-row"><span class="info-key">Cipher</span><span class="info-val mono">TLS_AES_256_GCM_SHA384</span></div><div class="info-row"><span class="info-key">Issuer</span><span class="info-val mono">Let&#x27;s Encrypt</span></div><div class="info-row"><span class="info-key">Subject</span><span class="info-val mono">demo.example.com</span></div><div class="info-row"><span class="info-key">Valid From</span><span class="info-val mono">Jan 1 00:00:00 2025 UTC</span></div><div class="info-row"><span class="info-key">Valid To</span><span class="info-val mono">Apr 1 00:00:00 2025 UTC</span></div><div class="info-row"><span class="info-key">Expired</span><span class="info-val mono">No</span></div><div class="info-row"><span class="info-key">Self-Signed</span><span class="info-val mono">No</span></div><div class="label">SANs</div><span class="subdomain-tag">demo.example.com</span> <span class="subdomain-tag">www.demo.example.com</span> <div class="label mt">Vulnerabilities</div><div class="ok">No SSL vulnerabilities detected</div></div>
-</div></div>
-  <div id="network">
-<div class="section">
+<div class="section" id="network">
   <div class="section-header">
     <span class="s-icon">🌐</span>
-    <span class="s-title">Network Map &amp; Firewall</span>
+    <span class="s-title">Network Map &amp; Firewall Detection</span>
   </div>
-  <div class="section-body"><div class="ok">No firewall filtering detected</div><div class="finding"><span class="warn-icon">⚖</span> Load balancer detected</div><table class="compact"><thead><tr><th>Hop</th><th>IP</th><th>Hostname</th><th>RTT</th></tr></thead><tbody><tr><td class='mono dim'>1</td><td class='mono'>192.168.1.1</td><td class='mono small dim'>gw</td><td class='mono'>0.8ms</td></tr><tr><td class='mono dim'>2</td><td class='mono'>72.14.192.1</td><td class='mono small dim'></td><td class='mono'>5.4ms</td></tr><tr><td class='mono dim'>3</td><td class='mono'>93.184.216.34</td><td class='mono small dim'>demo.example.com</td><td class='mono'>14.7ms</td></tr></tbody></table></div>
-</div></div>
+  <div class="section-body"><div class="alert alert-warn"><span>⚠</span> Firewall detected: Stateful Firewall / ICMP-filtered hops (hop 4 unreachable)</div><div class="alert alert-warn"><span>⚠</span> Load balancer detected (server header variance)</div><div style='margin-top:14px'><table class="compact"><thead><tr><th>Hop</th><th>IP</th><th>Hostname</th><th>RTT</th></tr></thead><tbody><tr><td class='mono dim'>1</td><td class='mono'>192.168.1.1</td><td class='mono dim'>gateway.local</td><td class='mono'>0.8ms</td></tr><tr><td class='mono dim'>2</td><td class='mono'>10.0.0.1</td><td class='mono dim'>isp-router.net</td><td class='mono'>2.4ms</td></tr><tr><td class='mono dim'>3</td><td class='mono'>72.14.192.1</td><td class='mono dim'></td><td class='mono'>5.1ms</td></tr><tr><td class='mono dim'>4</td><td class='mono'>* * *</td><td class='mono dim'></td><td class='mono'>0.0ms</td></tr><tr><td class='mono dim'>5</td><td class='mono'>209.85.240.1</td><td class='mono dim'></td><td class='mono'>9.7ms</td></tr><tr><td class='mono dim'>6</td><td class='mono'>72.14.234.100</td><td class='mono dim'>google-peer.net</td><td class='mono'>11.3ms</td></tr><tr><td class='mono dim'>7</td><td class='mono'>93.184.216.34</td><td class='mono dim'>example.com</td><td class='mono'>14.7ms</td></tr></tbody></table></div></div>
 </div>
 
-<!-- SMTP -->
-<div id="smtp">
-
-<div class="section full">
+<div class="section" id="smtp">
   <div class="section-header">
     <span class="s-icon">📧</span>
     <span class="s-title">SMTP Enumeration</span>
   </div>
-  <div class="section-body"><div class="info-row"><span class="info-key">Open</span><span class="info-val mono">Yes ✓</span></div><div class="info-row"><span class="info-key">Banner</span><span class="info-val mono">220 mail.example.com ESMTP Postfix</span></div><div class="info-row"><span class="info-key">STARTTLS</span><span class="info-val mono">Yes ✓</span></div><div class="info-row"><span class="info-key">AUTH Methods</span><span class="info-val mono">PLAIN, LOGIN</span></div><div class="info-row"><span class="info-key">Open Relay</span><span class="info-val mono">No</span></div><div class="info-row"><span class="info-key">VRFY Enabled</span><span class="info-val mono">No</span></div><div class="info-row"><span class="info-key">EXPN Enabled</span><span class="info-val mono">No</span></div><div class="info-row"><span class="info-key">Users Found</span><span class="info-val mono">None</span></div></div>
-</div>
+  <div class="section-body"><div class="info-row"><span class="info-key">Banner</span><span class="info-val mono">220 mail.example.com ESMTP Postfix (Ubuntu)</span></div><div class="info-row"><span class="info-key">STARTTLS</span><span class="info-val mono">Yes ✓</span></div><div class="info-row"><span class="info-key">AUTH Methods</span><span class="info-val mono">PLAIN, LOGIN, XOAUTH2</span></div><div class="info-row"><span class="info-key">Open Relay</span><span class="info-val mono">No</span></div><div class="info-row"><span class="info-key">VRFY Enabled</span><span class="info-val mono">No</span></div><div class="info-row"><span class="info-key">EXPN Enabled</span><span class="info-val mono">No</span></div><div class="info-row"><span class="info-key">Users Found</span><span class="info-val mono">None</span></div></div>
 </div>
 
-<!-- WEB RECON -->
-<div id="web">
+<div class="section" id="dns">
+  <div class="section-header">
+    <span class="s-icon">📡</span>
+    <span class="s-title">DNS Records</span>
+  </div>
+  <div class="section-body"><table><thead><tr><th>Type</th><th>Value</th></tr></thead><tbody><tr><td><span class="rtag">A</span></td><td class='mono'>93.184.216.34</td></tr><tr><td><span class="rtag">AAAA</span></td><td class='mono'>2606:2800:21f:cb07:6820:80da:af6b:8b2c</td></tr><tr><td><span class="rtag">MX</span></td><td class='mono'>0 mail.example.com.</td></tr><tr><td><span class="rtag">MX</span></td><td class='mono'>10 mail2.example.com.</td></tr><tr><td><span class="rtag">NS</span></td><td class='mono'>a.iana-servers.net.</td></tr><tr><td><span class="rtag">NS</span></td><td class='mono'>b.iana-servers.net.</td></tr><tr><td><span class="rtag">TXT</span></td><td class='mono'>v=spf1 -all</td></tr><tr><td><span class="rtag">TXT</span></td><td class='mono'>google-site-verification=abc123xyz</td></tr><tr><td><span class="rtag">TXT</span></td><td class='mono'>v=DMARC1; p=reject; rua=mailto:dmarc@example.com</td></tr><tr><td><span class="rtag">SOA</span></td><td class='mono'>a.iana-servers.net. noc.dns.icann.org. 2024090143 7200 3600 1209600 3600</td></tr><tr><td><span class="rtag">PTR</span></td><td class='mono'>example.com</td></tr></tbody></table></div>
+</div>
 
-<div class="section full">
+<div class="section" id="whois">
+  <div class="section-header">
+    <span class="s-icon">📋</span>
+    <span class="s-title">WHOIS &amp; Intelligence</span>
+  </div>
+  <div class="section-body"><div class="info-row"><span class="info-key">Org</span><span class="info-val mono">Internet Assigned Numbers Authority</span></div><div class="info-row"><span class="info-key">Registrar</span><span class="info-val mono">RESERVED — IANA</span></div><div class="info-row"><span class="info-key">Country</span><span class="info-val mono">US</span></div><div class="info-row"><span class="info-key">Created</span><span class="info-val mono">1995-08-14</span></div><div class="info-row"><span class="info-key">Expires</span><span class="info-val mono">2024-08-13</span></div><div class="label mt">Emails (WHOIS + OSINT harvest)</div><span class="subdomain-tag">admin@example.com</span><span class="subdomain-tag">tech@example.com</span><span class="subdomain-tag">abuse@iana.org</span><div class="label mt">Reverse IP — Co-hosted Domains (3)</div><div class="item-row">▶ example.com</div><div class="item-row">▶ www.example.com</div><div class="item-row">▶ docs.example.com</div><details style="margin-top:12px"><summary class="expand-toggle">Raw WHOIS (click to expand)</summary><pre>Domain Name: EXAMPLE.COM
+Registrar: RESERVED-Internet Assigned Numbers Authority
+Registrar IANA ID: 376
+Registrar URL: http://res-dom.iana.org
+Updated Date: 2023-08-14T07:01:44Z
+Creation Date: 1995-08-14T04:00:00Z
+Registry Expiry Date: 2024-08-13T04:00:00Z
+Registrar Abuse Contact Email: abuse@iana.org
+Registrar Abuse Contact Phone: +1.3108239358</pre></details></div>
+</div>
+
+<div class="section" id="asn">
+  <div class="section-header">
+    <span class="s-icon">🔢</span>
+    <span class="s-title">ASN / BGP Intelligence</span>
+  </div>
+  <div class="section-body"><div class="two-col"><div><div class="info-row"><span class="info-key">ASN</span><span class="info-val mono">AS15133</span></div><div class="info-row"><span class="info-key">Org</span><span class="info-val mono">Edgecast Inc.</span></div><div class="info-row"><span class="info-key">ISP</span><span class="info-val mono">MCI Communications Services, Inc. d/b/a Verizon Business</span></div><div class="info-row"><span class="info-key">IP Range</span><span class="info-val mono">93.184.216.0/24</span></div><div class="info-row"><span class="info-key">Country</span><span class="info-val mono">US</span></div><div class="info-row"><span class="info-key">RIR</span><span class="info-val mono">ARIN</span></div><div class="info-row"><span class="info-key">Abuse Email</span><span class="info-val mono">abuse@verizonbusiness.com</span></div></div><div><div class="label">Announced Prefixes (3)</div><span class="cpe-tag">93.184.216.0/24</span><span class="cpe-tag">93.184.220.0/22</span><span class="cpe-tag">93.184.8.0/21</span><div class="label mt">BGP Peers (4)</div><span class="subdomain-tag">AS701 (upstream)</span><span class="subdomain-tag">AS1239 (upstream)</span><span class="subdomain-tag">AS6461 (peer)</span><span class="subdomain-tag">AS3356 (peer)</span></div></div></div>
+</div>
+
+<div class="section" id="geoip">
   <div class="section-header">
     <span class="s-icon">🌍</span>
+    <span class="s-title">GeoIP Location</span>
+  </div>
+  <div class="section-body"><div class="info-row"><span class="info-key">IP</span><span class="info-val mono">93.184.216.34</span></div><div class="info-row"><span class="info-key">Country</span><span class="info-val mono">United States</span></div><div class="info-row"><span class="info-key">Region</span><span class="info-val mono">Massachusetts</span></div><div class="info-row"><span class="info-key">City</span><span class="info-val mono">Norwood</span></div><div class="info-row"><span class="info-key">Lat / Lon</span><span class="info-val mono">42.1654, -71.1995</span></div><div class="info-row"><span class="info-key">Timezone</span><span class="info-val mono">America/New_York</span></div><div class="info-row"><span class="info-key">ISP</span><span class="info-val mono">MCI Communications Services, Inc.</span></div><div class="info-row"><span class="info-key">Org</span><span class="info-val mono">Edgecast Inc.</span></div><div class="info-row"><span class="info-key">ASN</span><span class="info-val mono">AS15133</span></div><div style="margin-top:16px"><iframe src="https://www.openstreetmap.org/export/embed.html?bbox=-71.2495,42.1154,-71.1495,42.2154&amp;layer=mapnik&amp;marker=42.1654,-71.1995" style="width:100%;height:200px;border:1px solid var(--border);filter:invert(0.9) hue-rotate(180deg)" loading="lazy" title="Location map"></iframe></div></div>
+</div>
+
+<div class="section" id="subdomains">
+  <div class="section-header">
+    <span class="s-icon">🔍</span>
+    <span class="s-title">Subdomains Discovered <span class="s-badge">24</span></span>
+  </div>
+  <div class="section-body"><div class="subdomain-grid"><span class="subdomain-tag">admin.example.com</span><span class="subdomain-tag">api.example.com</span><span class="subdomain-tag">auth.example.com</span><span class="subdomain-tag">beta.example.com</span><span class="subdomain-tag">blog.example.com</span><span class="subdomain-tag">cdn.example.com</span><span class="subdomain-tag">dashboard.example.com</span><span class="subdomain-tag">dev.example.com</span><span class="subdomain-tag">docs.example.com</span><span class="subdomain-tag">git.example.com</span><span class="subdomain-tag">grafana.example.com</span><span class="subdomain-tag">jenkins.example.com</span><span class="subdomain-tag">kibana.example.com</span><span class="subdomain-tag">legacy.example.com</span><span class="subdomain-tag">mail.example.com</span><span class="subdomain-tag">portal.example.com</span><span class="subdomain-tag">shop.example.com</span><span class="subdomain-tag">sso.example.com</span><span class="subdomain-tag">staging.example.com</span><span class="subdomain-tag">static.example.com</span><span class="subdomain-tag">status.example.com</span><span class="subdomain-tag">support.example.com</span><span class="subdomain-tag">vpn.example.com</span><span class="subdomain-tag">www.example.com</span></div></div>
+</div>
+
+<div class="section" id="dorks">
+  <div class="section-header">
+    <span class="s-icon">🔎</span>
+    <span class="s-title">Google Dorking Results</span>
+  </div>
+  <div class="section-body"><div style="font-size:10px;color:var(--muted);font-family:var(--mono);margin-bottom:14px">8 categories searched &nbsp;·&nbsp; 16 total URLs found&nbsp;·&nbsp; Engines: DuckDuckGo → Bing (fallback) &nbsp;·&nbsp; No API key required</div><div class="dork-category"><div class="dork-cat-title"><span class="rtag">Login Panels</span><span style="font-size:10px;color:var(--green);font-family:var(--mono);background:rgba(0,0,0,.3);padding:1px 8px;border:1px solid var(--green);margin-left:6px">3 results</span><div class="mono dim" style="font-size:9px;margin-top:4px;color:var(--muted)">Query: site:example.com inurl:login | site:example.com inurl:admin</div></div><div class="dork-urls"><div class="item-row"><a href="https://example.com/admin/login" target="_blank" class="dork-link">https://example.com/admin/login</a></div><div class="item-row"><a href="https://example.com/wp-login.php" target="_blank" class="dork-link">https://example.com/wp-login.php</a></div><div class="item-row"><a href="https://portal.example.com/auth" target="_blank" class="dork-link">https://portal.example.com/auth</a></div></div></div><div class="dork-category"><div class="dork-cat-title"><span class="rtag">Admin Panels</span><span style="font-size:10px;color:var(--green);font-family:var(--mono);background:rgba(0,0,0,.3);padding:1px 8px;border:1px solid var(--green);margin-left:6px">2 results</span><div class="mono dim" style="font-size:9px;margin-top:4px;color:var(--muted)">Query: site:example.com inurl:wp-admin | site:example.com inurl:administrator</div></div><div class="dork-urls"><div class="item-row"><a href="https://example.com/wp-admin/" target="_blank" class="dork-link">https://example.com/wp-admin/</a></div><div class="item-row"><a href="https://example.com/wp-admin/admin-ajax.php" target="_blank" class="dork-link">https://example.com/wp-admin/admin-ajax.php</a></div></div></div><div class="dork-category"><div class="dork-cat-title"><span class="rtag">Config Files</span><span style="font-size:10px;color:var(--green);font-family:var(--mono);background:rgba(0,0,0,.3);padding:1px 8px;border:1px solid var(--green);margin-left:6px">2 results</span><div class="mono dim" style="font-size:9px;margin-top:4px;color:var(--muted)">Query: site:example.com ext:env &quot;DB_PASSWORD&quot; | site:example.com ext:xml | ext:conf</div></div><div class="dork-urls"><div class="item-row"><a href="https://example.com/config.xml.bak" target="_blank" class="dork-link">https://example.com/config.xml.bak</a></div><div class="item-row"><a href="https://example.com/phpinfo.php" target="_blank" class="dork-link">https://example.com/phpinfo.php</a></div></div></div><div class="dork-category"><div class="dork-cat-title"><span class="rtag">Sensitive Docs</span><span style="font-size:10px;color:var(--muted);font-family:var(--mono);background:rgba(0,0,0,.3);padding:1px 8px;border:1px solid var(--muted);margin-left:6px">0 results</span><div class="mono dim" style="font-size:9px;margin-top:4px;color:var(--muted)">Query: site:example.com ext:pdf | ext:docx confidential | site:example.com ext:log</div></div><div class="dork-urls"><div class="empty" style="padding:5px 0;font-size:10px">⚠ No results returned (search engine may have blocked automated queries)</div></div></div><div class="dork-category"><div class="dork-cat-title"><span class="rtag">Exposed Dirs</span><span style="font-size:10px;color:var(--green);font-family:var(--mono);background:rgba(0,0,0,.3);padding:1px 8px;border:1px solid var(--green);margin-left:6px">2 results</span><div class="mono dim" style="font-size:9px;margin-top:4px;color:var(--muted)">Query: site:example.com intitle:&quot;index of&quot; | site:example.com intitle:&quot;Index of /&quot; &quot;.git&quot;</div></div><div class="dork-urls"><div class="item-row"><a href="https://example.com/files/" target="_blank" class="dork-link">https://example.com/files/</a></div><div class="item-row"><a href="https://dev.example.com/logs/" target="_blank" class="dork-link">https://dev.example.com/logs/</a></div></div></div><div class="dork-category"><div class="dork-cat-title"><span class="rtag">Api Endpoints</span><span style="font-size:10px;color:var(--green);font-family:var(--mono);background:rgba(0,0,0,.3);padding:1px 8px;border:1px solid var(--green);margin-left:6px">3 results</span><div class="mono dim" style="font-size:9px;margin-top:4px;color:var(--muted)">Query: site:example.com inurl:/api/ | site:example.com inurl:/v1/ | site:api.example.com</div></div><div class="dork-urls"><div class="item-row"><a href="https://api.example.com/v1/users" target="_blank" class="dork-link">https://api.example.com/v1/users</a></div><div class="item-row"><a href="https://api.example.com/v2/status" target="_blank" class="dork-link">https://api.example.com/v2/status</a></div><div class="item-row"><a href="https://example.com/api/health" target="_blank" class="dork-link">https://example.com/api/health</a></div></div></div><div class="dork-category"><div class="dork-cat-title"><span class="rtag">Subdomains</span><span style="font-size:10px;color:var(--green);font-family:var(--mono);background:rgba(0,0,0,.3);padding:1px 8px;border:1px solid var(--green);margin-left:6px">4 results</span><div class="mono dim" style="font-size:9px;margin-top:4px;color:var(--muted)">Query: site:example.com -www | site:example.com -inurl:www</div></div><div class="dork-urls"><div class="item-row"><a href="https://api.example.com" target="_blank" class="dork-link">https://api.example.com</a></div><div class="item-row"><a href="https://staging.example.com" target="_blank" class="dork-link">https://staging.example.com</a></div><div class="item-row"><a href="https://cdn.example.com" target="_blank" class="dork-link">https://cdn.example.com</a></div><div class="item-row"><a href="https://docs.example.com" target="_blank" class="dork-link">https://docs.example.com</a></div></div></div><div class="dork-category"><div class="dork-cat-title"><span class="rtag">Error Pages</span><span style="font-size:10px;color:var(--muted);font-family:var(--mono);background:rgba(0,0,0,.3);padding:1px 8px;border:1px solid var(--muted);margin-left:6px">0 results</span><div class="mono dim" style="font-size:9px;margin-top:4px;color:var(--muted)">Query: site:example.com &quot;SQL syntax&quot; | &quot;mysql_fetch&quot; | site:example.com &quot;stack trace&quot;</div></div><div class="dork-urls"><div class="empty" style="padding:5px 0;font-size:10px">⚠ No results returned (search engine may have blocked automated queries)</div></div></div></div>
+</div>
+
+<div class="section" id="github">
+  <div class="section-header">
+    <span class="s-icon">🐙</span>
+    <span class="s-title">GitHub Secret Leaks <span class="s-badge">3</span></span>
+  </div>
+  <div class="section-body"><div style="margin-bottom:10px;font-family:var(--mono);font-size:11px"><span style="color:var(--red)">2 HIGH</span> · <span style="color:var(--yellow)">1 MEDIUM</span> · 3 total findings</div><div class="scroll-table"><table><thead><tr><th>Severity</th><th>Type</th><th>Match (redacted)</th><th>Repository</th><th>File</th></tr></thead><tbody><tr><td><span class='badge' style='color:var(--yellow);border-color:var(--yellow)'>MEDIUM</span></td><td class='mono'>Password</td><td class='mono dim'>passwo******</td><td class='mono small'><a href='https://github.com/somedev/example-app' target='_blank' class='dork-link'>somedev/example-app</a></td><td class='mono dim'>config/database.yml</td></tr><tr><td><span class='badge' style='color:var(--red);border-color:var(--red)'>HIGH</span></td><td class='mono'>AWS Access Key ID</td><td class='mono dim'>AKIAIO******</td><td class='mono small'><a href='https://github.com/anotherdev/example-integration' target='_blank' class='dork-link'>anotherdev/example-integration</a></td><td class='mono dim'>.env.example</td></tr><tr><td><span class='badge' style='color:var(--red);border-color:var(--red)'>HIGH</span></td><td class='mono'>API Key</td><td class='mono dim'>sk_live_******</td><td class='mono small'><a href='https://github.com/devteam/internal-scripts' target='_blank' class='dork-link'>devteam/internal-scripts</a></td><td class='mono dim'>deploy/secrets.yml</td></tr></tbody></table></div></div>
+</div>
+
+<div class="section" id="shodan">
+  <div class="section-header">
+    <span class="s-icon">🕵️</span>
+    <span class="s-title">Shodan Intelligence <span class="s-badge">3</span></span>
+  </div>
+  <div class="section-body"><div class="two-col"><div><div class="info-row"><span class="info-key">IP</span><span class="info-val mono">93.184.216.34</span></div><div class="info-row"><span class="info-key">Org</span><span class="info-val mono">Edgecast Inc.</span></div><div class="info-row"><span class="info-key">ISP</span><span class="info-val mono">MCI Communications Services, Inc.</span></div><div class="info-row"><span class="info-key">ASN</span><span class="info-val mono">AS15133</span></div><div class="info-row"><span class="info-key">Country</span><span class="info-val mono">United States</span></div><div class="info-row"><span class="info-key">City</span><span class="info-val mono">Norwood</span></div><div class="info-row"><span class="info-key">OS</span><span class="info-val mono">Linux 3.x</span></div><div class="info-row"><span class="info-key">Last Update</span><span class="info-val mono">2025-03-28T09:15:22</span></div></div><div><div class="label">Open Ports (Shodan history)</div><span class="cpe-tag">22</span><span class="cpe-tag">53</span><span class="cpe-tag">80</span><span class="cpe-tag">443</span><span class="cpe-tag">6379</span><span class="cpe-tag">8080</span><span class="cpe-tag">8443</span><div class="label mt">Tags</div><span class="tech-badge">cloud</span><span class="tech-badge">cdn</span><span class="tech-badge">self-signed</span><div class="label mt">CVEs (3)</div><div class="finding"><span class="warn-icon">⚠</span> CVE-2023-44487</div><div class="finding"><span class="warn-icon">⚠</span> CVE-2024-21626</div><div class="finding"><span class="warn-icon">⚠</span> CVE-2023-38545</div></div></div><div class="label mt">Service Banners</div><table class="compact"><thead><tr><th>Port</th><th>Product</th><th>Version</th><th>Banner</th></tr></thead><tbody><tr><td class='mono'>80</td><td class='mono dim'>nginx</td><td class='mono dim'>1.24.0</td><td class='banner'>HTTP/1.1 200 OK Server: nginx/1.24.0</td></tr><tr><td class='mono'>443</td><td class='mono dim'>nginx</td><td class='mono dim'>1.24.0</td><td class='banner'>HTTP/1.1 200 OK Strict-Transport-Security: max-age=31536000</td></tr><tr><td class='mono'>22</td><td class='mono dim'>OpenSSH</td><td class='mono dim'>9.2p1</td><td class='banner'>SSH-2.0-OpenSSH_9.2p1 Ubuntu-3ubuntu0.6</td></tr><tr><td class='mono'>6379</td><td class='mono dim'>Redis</td><td class='mono dim'>7.0.11</td><td class='banner'>redis_version:7.0.11 redis_mode:standalone</td></tr><tr><td class='mono'>8080</td><td class='mono dim'>nginx</td><td class='mono dim'>1.24.0</td><td class='banner'>HTTP/1.1 301 Moved Permanently</td></tr></tbody></table></div>
+</div>
+
+<div class="section" id="ssl">
+  <div class="section-header">
+    <span class="s-icon">🔐</span>
+    <span class="s-title">SSL/TLS Analysis</span>
+  </div>
+  <div class="section-body"><div class="ssl-grade" style="color:#00e676">A+</div><div class="info-row"><span class="info-key">Enabled</span><span class="info-val mono">Yes ✓</span></div><div class="info-row"><span class="info-key">Version</span><span class="info-val mono">TLSv1.3</span></div><div class="info-row"><span class="info-key">Cipher</span><span class="info-val mono">TLS_AES_256_GCM_SHA384</span></div><div class="info-row"><span class="info-key">Issuer</span><span class="info-val mono">DigiCert Inc</span></div><div class="info-row"><span class="info-key">Subject</span><span class="info-val mono">example.com</span></div><div class="info-row"><span class="info-key">Valid From</span><span class="info-val mono">Jan  1 00:00:00 2025 UTC</span></div><div class="info-row"><span class="info-key">Valid To</span><span class="info-val mono">Jan  1 00:00:00 2026 UTC</span></div><div class="info-row"><span class="info-key">Expired</span><span class="info-val mono">No</span></div><div class="info-row"><span class="info-key">Self-Signed</span><span class="info-val mono">No</span></div><div class="label mt">Subject Alternative Names (4)</div><span class="subdomain-tag">example.com</span><span class="subdomain-tag">www.example.com</span><span class="subdomain-tag">api.example.com</span><span class="subdomain-tag">cdn.example.com</span><div class="label mt">Vulnerabilities</div><div class="ok">No SSL vulnerabilities detected</div></div>
+</div>
+
+<div class="section" id="web">
+  <div class="section-header">
+    <span class="s-icon">🌏</span>
     <span class="s-title">Web Reconnaissance</span>
   </div>
   <div class="section-body">
 <div class="two-col">
-  <div><div class="info-row"><span class="info-key">URL</span><span class="info-val mono">https://demo.example.com</span></div><div class="info-row"><span class="info-key">Status</span><span class="info-val mono">200</span></div><div class="info-row"><span class="info-key">Response Time</span><span class="info-val mono">0.34s</span></div><div class="info-row"><span class="info-key">Content Length</span><span class="info-val mono">48,291 bytes</span></div><div class="info-row"><span class="info-key">Server</span><span class="info-val mono">nginx/1.24.0</span></div><div class="info-row"><span class="info-key">Title</span><span class="info-val mono">Example Domain</span></div><div class="info-row"><span class="info-key">HTTPS Redirect</span><span class="info-val mono">Yes ✓</span></div><div class="info-row"><span class="info-key">HSTS</span><span class="info-val mono">Yes ✓</span></div><div class="label">Technologies</div><span class="tech-badge">Nginx</span><span class="tech-badge">PHP</span><span class="tech-badge">WordPress</span><div class="label mt">CDN / WAF</div><span class="cdn-badge">Cloudflare</span></div>
-  <div><div class="label">Security Misconfigurations</div><div class="finding"><span class="warn-icon">⚠</span> Missing Content-Security-Policy</div><div class="finding"><span class="warn-icon">⚠</span> Server version disclosure: nginx/1.24.0</div></div>
+  <div><div class="info-row"><span class="info-key">URL</span><span class="info-val mono">https://example.com</span></div><div class="info-row"><span class="info-key">Status</span><span class="info-val mono">200</span></div><div class="info-row"><span class="info-key">Response Time</span><span class="info-val mono">0.342s</span></div><div class="info-row"><span class="info-key">Content Length</span><span class="info-val mono">48,291 bytes</span></div><div class="info-row"><span class="info-key">Server</span><span class="info-val mono">nginx/1.24.0</span></div><div class="info-row"><span class="info-key">Title</span><span class="info-val mono">Example Domain — Security Testing Demo</span></div><div class="info-row"><span class="info-key">HTTPS Redirect</span><span class="info-val mono">Yes ✓</span></div><div class="info-row"><span class="info-key">HSTS</span><span class="info-val mono">Yes ✓</span></div><div class="label">Technologies</div><span class="tech-badge">Nginx</span><span class="tech-badge">PHP</span><span class="tech-badge">WordPress</span><span class="tech-badge">React</span><span class="tech-badge">Google Analytics</span><span class="tech-badge">Google Tag Manager</span><div class="label mt">CDN / WAF</div><span class="cdn-badge">Cloudflare</span><span class="cdn-badge">Nginx WAF</span></div>
+  <div><div class="label">Security Misconfigurations</div><div class="finding"><span class="warn-icon">⚠</span> Missing header: content-security-policy</div><div class="finding"><span class="warn-icon">⚠</span> Missing header: permissions-policy</div><div class="finding"><span class="warn-icon">⚠</span> Server version disclosure: nginx/1.24.0</div><div class="finding"><span class="warn-icon">⚠</span> X-Powered-By disclosure: PHP/8.2.10</div></div>
 </div>
-<table class="compact"><thead><tr><th>Header</th><th>Value</th></tr></thead><tbody><tr><td class='mono dim'>server</td><td class='mono small'>nginx/1.24.0</td></tr><tr><td class='mono dim'>strict-transport-security</td><td class='mono small'>max-age=31536000</td></tr><tr><td class='mono dim'>x-frame-options</td><td class='mono small'>SAMEORIGIN</td></tr></tbody></table>
-<div class="label mt">Emails Found</div><span class="subdomain-tag">admin@example.com</span>
-<div class="label mt">Forms</div><div class="item-row">▶ POST → /wp-login.php</div>
+<table class="compact"><thead><tr><th>Header</th><th>Value</th></tr></thead><tbody><tr><td class='mono dim'>server</td><td class='mono small'>nginx/1.24.0</td></tr><tr><td class='mono dim'>content-type</td><td class='mono small'>text/html; charset=UTF-8</td></tr><tr><td class='mono dim'>x-powered-by</td><td class='mono small'>PHP/8.2.10</td></tr><tr><td class='mono dim'>cache-control</td><td class='mono small'>max-age=3600</td></tr><tr><td class='mono dim'>x-frame-options</td><td class='mono small'>SAMEORIGIN</td></tr><tr><td class='mono dim'>x-content-type-options</td><td class='mono small'>nosniff</td></tr><tr><td class='mono dim'>strict-transport-security</td><td class='mono small'>max-age=31536000; includeSubDomains</td></tr><tr><td class='mono dim'>x-request-id</td><td class='mono small'>req-abc123-def456</td></tr><tr><td class='mono dim'>vary</td><td class='mono small'>Accept-Encoding</td></tr><tr><td class='mono dim'>referrer-policy</td><td class='mono small'>strict-origin-when-cross-origin</td></tr></tbody></table>
+<div class="label mt">Emails on Page</div><span class="subdomain-tag">admin@example.com</span> <span class="subdomain-tag">webmaster@example.com</span> <span class="subdomain-tag">security@example.com</span>
+<div class="label mt">Forms</div><div class="item-row">▶ POST → /wp-login.php</div><div class="item-row">▶ GET → /search</div><div class="item-row">▶ POST → /api/contact</div><div class="item-row">▶ POST → /api/newsletter</div>
+<div class="label mt">JS Files (4)</div><div class="js-file-grid"><a href="https://example.com/wp-includes/js/jquery/jquery.min.js" target="_blank" class="js-file-card"><span class="js-icon">⟨/⟩</span><span class="js-url">https://example.com/wp-includes/js/jquery/jquery.min.js</span></a><a href="https://cdn.example.com/app.bundle.v2.js" target="_blank" class="js-file-card"><span class="js-icon">⟨/⟩</span><span class="js-url">https://cdn.example.com/app.bundle.v2.js</span></a><a href="https://www.googletagmanager.com/gtm.js?id=GTM-XXXXX" target="_blank" class="js-file-card"><span class="js-icon">⟨/⟩</span><span class="js-url">https://www.googletagmanager.com/gtm.js?id=GTM-XXXXX</span></a><a href="https://js.hs-scripts.com/2270269.js" target="_blank" class="js-file-card"><span class="js-icon">⟨/⟩</span><span class="js-url">https://js.hs-scripts.com/2270269.js</span></a></div>
+<div class="label mt">HTTP Methods Accepted</div><span class="method-tag">HTTP method allowed: OPTIONS → 200</span><span class="method-tag">HTTP method allowed: PUT → 405</span><span class="method-tag">HTTP method allowed: DELETE → 405</span><span class="method-tag">HTTP method allowed: TRACE → 403</span>
+<div class="label mt">HTML Comments</div><div class="comment-block">TODO: remove debug mode before production deployment</div><div class="comment-block">Build: v2.4.1-beta (2025-03-15)</div><div class="comment-block">Analytics Tracking ID: UA-12345678-1</div>
+<div class="label mt">Directories / Sensitive Files</div><div class="finding"><span style="color:var(--green)">▶</span> https://example.com/admin [403]</div><div class="finding"><span style="color:var(--green)">▶</span> https://example.com/wp-admin [301]</div><div class="finding"><span style="color:var(--green)">▶</span> https://example.com/api [200]</div><div class="finding"><span style="color:var(--green)">▶</span> https://example.com/backup [403]</div><div class="finding"><span style="color:var(--green)">▶</span> https://example.com/.env [403]</div><div class="finding"><span style="color:var(--green)">▶</span> https://example.com/phpinfo.php [403]</div>
+<details><summary class="expand-toggle">robots.txt</summary><pre>User-agent: *
+Disallow: /admin/
+Disallow: /wp-admin/
+Disallow: /private/
+Disallow: /api/internal/
+Sitemap: https://example.com/sitemap.xml</pre></details></div>
+</div>
 
+<div class="section" id="warnings">
+  <div class="section-header">
+    <span class="s-icon">⚠</span>
+    <span class="s-title">Scan Warnings &amp; Alerts</span>
+  </div>
+  <div class="section-body"><div class="alert alert-warn"><span>⚠</span> Firewall detected: Stateful Firewall / ICMP-filtered hops</div><div class="alert alert-warn"><span>⚠</span> Load balancer detected (server header variance)</div><div class="alert alert-warn"><span>⚠</span> Shodan found 3 CVEs: CVE-2023-44487, CVE-2024-21626, CVE-2023-38545</div><div class="alert alert-warn"><span>⚠</span> 2 HIGH severity GitHub secret leaks found</div></div>
+</div>
 
-<div class="label mt">Directories Found</div><div class="finding"><span style="color:var(--green)">▶</span> https://demo.example.com/admin [403]</div><div class="finding"><span style="color:var(--green)">▶</span> https://demo.example.com/.env [403]</div>
-
-<details><summary class="expand-toggle">robots.txt (click to expand)</summary><pre>User-agent: *
-Disallow: /admin/</pre></details>
 </div>
 </div>
-</div>
-
-</div><!-- /content -->
-</div><!-- /main -->
 
 <footer class="footer">
-  ReconScout v2.1 &nbsp;·&nbsp; by <span style="color:var(--accent2);font-weight:600">Agent P</span>
-  &nbsp;·&nbsp; Generated 2025-01-15 14:35:47 &nbsp;·&nbsp; Duration: 226.3s
-  &nbsp;·&nbsp; FOR AUTHORIZED USE ONLY
+  ReconScout v2.1 &nbsp;·&nbsp;
+  by <span style="color:var(--accent2);font-weight:600">Agent P</span>
+  &nbsp;·&nbsp; 2025-04-04 14:25:47 &nbsp;·&nbsp; Duration: 226.3s &nbsp;·&nbsp;
+  FOR AUTHORIZED USE ONLY
 </footer>
 
 <script>
-const MONO = "'JetBrains Mono',monospace";
-const MUTED  = "#4a6080";
-const BORDER = "#1b2d45";
-const PAL = ["#00e5ff","#00e676","#7c3aed","#ffd740","#ff5252",
-             "#ff9800","#40c4ff","#b39ddb","#69f0ae","#ffca28","#ff6e40","#26c6da"];
-
-const baseOpts = {
-  responsive: true, maintainAspectRatio: false,
-  plugins: { legend: { labels: { color: MUTED, font: { family: MONO, size: 10 } } } },
-  scales: {
-    x: { ticks: { color: MUTED, font: { family: MONO, size: 9 } }, grid: { color: BORDER } },
-    y: { ticks: { color: MUTED, font: { family: MONO, size: 9 } }, grid: { color: BORDER }, beginAtZero: true },
-  }
-};
-
-new Chart(document.getElementById('portChart'), {
-  type: 'bar',
-  data: {
-    labels: ["22", "80", "443", "8080"],
-    datasets: [{ label: 'Port', data: [1, 1, 1, 1],
-      backgroundColor: 'rgba(0,229,255,0.3)',
-      borderColor: '#00e5ff', borderWidth: 1, borderRadius: 3
-    }]
-  },
-  options: { ...baseOpts }
-});
-
-new Chart(document.getElementById('svcChart'), {
-  type: 'doughnut',
-  data: {
-    labels: ["SSH", "HTTP", "HTTPS", "HTTP-Proxy"],
-    datasets: [{ data: [1, 1, 1, 1],
-      backgroundColor: PAL, borderColor: '#0f1929', borderWidth: 2
-    }]
-  },
-  options: {
-    responsive: true, maintainAspectRatio: false,
-    plugins: { legend: {
-      position: 'right',
-      labels: { color: MUTED, font: { family: MONO, size: 10 }, padding: 10, boxWidth: 10 }
-    } }
-  }
-});
+const MONO='"JetBrains Mono",monospace',MT="#4a6080",BR="#1b2d45";
+const PAL=["#00e5ff","#00e676","#7c3aed","#ffd740","#ff5252","#ff9800","#40c4ff","#b39ddb","#69f0ae","#ffca28","#ff6e40"];
+const base={responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{labels:{color:MT,font:{family:MONO,size:10}}}},
+  scales:{x:{ticks:{color:MT,font:{family:MONO,size:9}},grid:{color:BR}},
+           y:{ticks:{color:MT,font:{family:MONO,size:9}},grid:{color:BR},beginAtZero:true}}};
+new Chart(document.getElementById('portChart'),{type:'bar',
+  data:{labels:["22", "53", "80", "443", "6379", "8080", "8443"],datasets:[{label:'Port',data:[1, 1, 1, 1, 1, 1, 1],backgroundColor:'rgba(0,229,255,.3)',borderColor:'#00e5ff',borderWidth:1,borderRadius:3}]},
+  options:{...base}});
+new Chart(document.getElementById('svcChart'),{type:'doughnut',
+  data:{labels:["SSH", "DNS", "HTTP", "HTTPS", "Redis", "HTTP-Proxy", "HTTPS-Alt"],datasets:[{data:[1, 1, 1, 1, 1, 1, 1],backgroundColor:PAL,borderColor:'#0f1929',borderWidth:2}]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'right',labels:{color:MT,font:{family:MONO,size:10},padding:9,boxWidth:9}}}}});
 </script>
-</body>
-</html>
+</body></html>
