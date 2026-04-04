@@ -1,5 +1,16 @@
 # ReconScout v2.1
 
+<p align="center">
+  <img src="recon-scout.png" alt="Agent P - WhatsApp Privacy Shield" width="480"/>
+</p>
+
+<p align="center">
+  <b>Version 2.1</b> · Created by <b>Agent P</b><br/>
+ReconScout is a professional-grade, modular Python reconnaissance framework designed for
+penetration testers, security engineers, and red team operators. Inspired by Nmap,
+Recon-ng, and Amass — built as a clean, extensible single-tool replacement.
+</p>
+
 ```
   ██████╗ ███████╗ ██████╗ ██████╗ ███╗   ██╗███████╗ ██████╗ ██████╗ ██╗   ██╗████████╗
   ██╔══██╗██╔════╝██╔════╝██╔═══██╗████╗  ██║██╔════╝██╔════╝██╔═══██╗██║   ██║╚══██╔══╝
@@ -9,17 +20,11 @@
   ╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝ ╚═════╝ ╚═════╝  ╚═════╝    ╚═╝
 ```
 
-> ⚠ **DISCLAIMER: This tool is for AUTHORIZED security testing and educational purposes ONLY.**
-> Unauthorized scanning of systems you do not own or have explicit written permission to test is
-> illegal. Always obtain written authorization before conducting any reconnaissance.
+<p align="center"> ⚠ <b>DISCLAIMER: This tool is for AUTHORIZED security testing and educational purposes ONLY.</b>
+ Unauthorized scanning of systems you do not own or have explicit written permission to test is
+ illegal. Always obtain written authorization before conducting any reconnaissance. </p>
 
 ---
-
-## Overview
-
-ReconScout is a professional-grade, modular Python reconnaissance framework designed for
-penetration testers, security engineers, and red team operators. Inspired by Nmap,
-Recon-ng, and Amass — built as a clean, extensible single-tool replacement.
 
 **Zero required dependencies** — works out of the box with Python 3.8+ stdlib.
 Optional packages unlock enhanced capabilities.
