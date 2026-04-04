@@ -1,39 +1,36 @@
 {
   "_tool":       "ReconScout v2.1",
+  "_author":     "Agent P",
   "_disclaimer": "Authorized security testing and educational purposes only.",
 
   "scan_intensity": {
-    "stealth": {
-      "threads": 5,
-      "timeout": 3.0,
-      "delay":   0.5,
-      "_note":   "Minimal footprint — long ETA, evades basic rate-limiting IDS"
-    },
-    "normal": {
-      "threads": 50,
-      "timeout": 2.0,
-      "delay":   0.0,
-      "_note":   "Balanced — suitable for most authorized engagements"
-    },
-    "aggressive": {
-      "threads": 200,
-      "timeout": 0.5,
-      "delay":   0.0,
-      "_note":   "Maximum speed — generates significant network noise, internal use"
-    }
+    "stealth":    { "threads": 5,   "timeout": 3.0, "delay": 0.5  },
+    "normal":     { "threads": 50,  "timeout": 2.0, "delay": 0.0  },
+    "aggressive": { "threads": 200, "timeout": 0.5, "delay": 0.0  }
   },
 
-  "user_agent": "Mozilla/5.0 (compatible; ReconScout/2.1; +github.com/yourorg/reconscout)",
+  "user_agent":   "Mozilla/5.0 (compatible; ReconScout/2.1; +github.com/yourorg/reconscout)",
+  "dns_servers":  ["8.8.8.8", "1.1.1.1", "9.9.9.9"],
+  "http_timeout": 8,
+  "retry_count":  2,
+  "retry_delay":  0.5,
 
-  "dns_servers": [
-    "8.8.8.8",
-    "1.1.1.1",
-    "9.9.9.9"
-  ],
+  "_wordlists": "Set paths to enable automatic subdomain / dir brute-force",
+  "wordlist_default":     "",
+  "dir_wordlist_default": "",
 
-  "wordlist_default": "",
+  "_api_keys": "Add your API keys below. Leave blank to skip that module.",
 
-  "http_timeout":  8,
-  "retry_count":   2,
-  "retry_delay":   0.5
+  "shodan_api_key":  "",
+  "_shodan_note":    "Get a free key at https://account.shodan.io — enables CVE lookup, banner data, open port history",
+
+  "github_token":    "",
+  "_github_note":    "Optional. Without a token GitHub API rate-limits to 60 req/hr. Get at https://github.com/settings/tokens",
+
+  "_google_dorks":   "Google dorking uses public search — enable/disable below",
+  "enable_google_dorks":  true,
+  "dork_delay_sec":       2.0,
+
+  "enable_shodan":   true,
+  "enable_github_leak_scan": true
 }
