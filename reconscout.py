@@ -2,7 +2,8 @@
 """
 ReconScout v2.1 — Advanced Reconnaissance & Asset Discovery Framework
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Author  : Agent P <code name>
+Author  : Agent P
+GitHub  : github.com/yourorg/reconscout
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ⚠  DISCLAIMER: This tool is for AUTHORIZED security testing and
    educational purposes ONLY. Unauthorized use is illegal.
